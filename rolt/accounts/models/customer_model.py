@@ -48,3 +48,6 @@ class Customer(BaseModel):
 
     class Meta:
         ordering = ["user__first_name", "user__last_name"]
+        verbose_name = "Customer"
+        verbose_name_plural = "Customers"
+        db_table = "customer"

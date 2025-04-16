@@ -83,3 +83,18 @@ def make_employee_is_product_manager(db, authenticate):
         return user
 
     return create_employee
+
+
+@pytest.fixture
+def make_employee_is_product_manager_and_support_agent(db, authenticate):
+    def create_employee():
+        user = authenticate(is_staff=True)
+        group1, _ = Group.objects.get_or_create(name="Product Manager")
+        group2, _ = Group.objects.get_or_create(name="Support")
+        user.groups.add(group1)
+        user.groups.add(group2)
+
+        Employee.objects.get_or_create(user=user)
+        return user
+
+    return create_employee

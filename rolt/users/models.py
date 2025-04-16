@@ -8,3 +8,9 @@ from django.db import models
 class BaseUser(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
+
+    class Meta:
+        ordering = ["first_name", "last_name"]
+        verbose_name = "User"
+        verbose_name_plural = "Users"
+        db_table = "user"
