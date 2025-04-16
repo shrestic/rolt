@@ -1,0 +1,74 @@
+{
+    "name": "rolt_dev",
+    "dockerComposeFile": [
+        "../docker-compose.local.yml"
+    ],
+    "init": true,
+    "mounts": [
+        {
+            "source": "./.devcontainer/bash_history",
+            "target": "/home/dev-user/.bash_history",
+            "type": "bind"
+        },
+        {
+            "source": "~/.ssh",
+            "target": "/home/dev-user/.ssh",
+            "type": "bind"
+        }
+    ],
+    "overrideCommand": false,
+    "service": "django",
+    "remoteUser": "dev-user",
+    "workspaceFolder": "/app",
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "editor.formatOnSave": true,
+                "[python]": {
+                    "analysis.autoImportCompletions": true,
+                    "analysis.typeCheckingMode": "basic",
+                    "defaultInterpreterPath": "/usr/local/bin/python",
+                    "editor.codeActionsOnSave": {
+                        "source.organizeImports": "always"
+                    },
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "languageServer": "Pylance",
+                    "linting.enabled": true,
+                    "linting.mypyEnabled": true,
+                    "linting.mypyPath": "/usr/local/bin/mypy"
+                }
+            },
+            "extensions": [
+                "amazonwebservices.aws-toolkit-vscode",
+                "nils-werner.autoDocstring",
+                "ms-python.autopep8",
+                "ms-python.black-formatter",
+                "streetsidesoftware.code-spell-checker",
+                "anysphere.cursor",
+                "batisteo.vscode-django",
+                "mhutchie.git-graph",
+                "donjayamanne.git-history",
+                "github.vscode-github-actions",
+                "codezombiech.gitignore",
+                "ms-vscode.intellicode",
+                "ms-vscode.intellicode-api-usage-examples",
+                "ms-python.isort",
+                "yiyi.yiyi-markdown-preview-enhanced",
+                "ms-python.vscode-pylance",
+                "ms-python.python",
+                "ms-python.debugpy",
+                "donjayamanne.python-environment-manager", // deprecated nhưng bạn vẫn có thể giữ nếu dùng cũ
+                "donjayamanne.python-extension-pack",
+                "mechatroner.rainbow-csv",
+                "charliermarsh.ruff",
+                "streetsidesoftware.code-spell-checker-vietnamese",
+                "silofy.hackthebox",
+                "wholroyd.jinja",
+                "pkief.material-icon-theme",
+                "kevinrose.vsc-python-indent",
+                "ferhat.python-snippets"
+            ]
+        }
+    },
+    "postCreateCommand": "cat .devcontainer/bashrc.override.sh >> ~/.bashrc"
+}

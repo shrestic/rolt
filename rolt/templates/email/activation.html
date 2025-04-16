@@ -1,0 +1,76 @@
+{% load i18n %}
+
+{% block subject %}
+  {% blocktrans %}Account activation on {{ site_name }}{% endblocktrans %}
+{% endblock subject %}
+{% block text_body %}
+  {% blocktrans %}You're receiving this email because you need to finish activation process on {{ site_name }}.{% endblocktrans %}
+  {% trans "Please go to the following page to activate account:" %}
+  {{ protocol }}://{{ domain }}/{{ url|safe }}
+  {% trans "Thanks for using our site!" %}
+  {% blocktrans %}The {{ site_name }} team{% endblocktrans %}
+{% endblock text_body %}
+{% block html_body %}
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <title>{% blocktrans %}Account Activation - {{ site_name }}{% endblocktrans %}</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f6f6f6;
+          margin: 0;
+          padding: 20px;
+        }
+
+        .email-container {
+          max-width: 600px;
+          margin: auto;
+          background-color: #ffffff;
+          padding: 30px;
+          border-radius: 10px;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .button {
+          display: inline-block;
+          margin-top: 20px;
+          padding: 12px 25px;
+          background-color: #007bff;
+          color: #ffffff !important;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: bold;
+        }
+
+        .footer {
+          margin-top: 30px;
+          font-size: 12px;
+          color: #999999;
+          text-align: center;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-container">
+        <h2>{% blocktrans %}Welcome to {{ site_name }}!{% endblocktrans %}</h2>
+        <p>
+          {% blocktrans %}You're receiving this email because you need to finish activation process on {{ site_name }}.{% endblocktrans %}
+        </p>
+        <p>{% trans "Please click the button below to activate your account:" %}</p>
+        <p>
+          <a href="{{ protocol }}://{{ domain }}/activate/{{ uid }}/{{ token }}"
+             class="button">{% trans "Activate Account" %}</a>
+        </p>
+        <p>{% trans "If the button doesn't work, copy and paste the link below into your browser:" %}</p>
+        <p>
+          <a href="{{ protocol }}://{{ domain }}/activate/{{ uid }}/{{ token }}">{{ protocol }}://{{ domain }}/activate/{{ uid }}/{{ token }}</a>
+        </p>
+        <p>{% trans "Thanks for using our site!" %}</p>
+        <p>{% blocktrans %}The {{ site_name }} team{% endblocktrans %}</p>
+        <div class="footer">© {{ site_name }} - {% now "Y" %}</div>
+      </div>
+    </body>
+  </html>
+{% endblock html_body %}
