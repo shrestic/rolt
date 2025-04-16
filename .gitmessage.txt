@@ -1,0 +1,29 @@
+# <type>(<scope>): <short summary>
+#
+# Add a more detailed description below if needed.
+#
+# -----------------------------------------------------
+# Type (required):
+#   feat      = Add a new feature
+#   fix       = Fix a bug
+#   refactor  = Refactor code (no new features or bug fixes)
+#   chore     = Minor tasks like configs/build/scripts
+#   test      = Add or update tests
+#   docs      = Update documentation or code comments
+#   style     = Code formatting (no logic change)
+#   perf      = Improve performance
+#   ci        = Changes to CI/CD pipeline
+#
+# Scope (optional but recommended):
+#   auth, user, api, file, config, tests, pipeline, ...
+#
+# -----------------------------------------------------
+#
+# Example:
+# feat(auth): implement OTP verification via email
+#
+# - Create API to send OTP during registration
+# - Verify email using OTP code
+# - Add tests for the whole flow
+#
+# Refs: #123
