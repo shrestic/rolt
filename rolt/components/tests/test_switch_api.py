@@ -269,7 +269,7 @@ class TestSwitchApi:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert (
             response.data["message"]
-            == "ComponentType with code 'INVALID_TYPE' does not exist."
+            == "Component type with code 'INVALID_TYPE' does not exist."
         )
 
     def test_if_employee_is_product_manager_bulk_create_with_duplicate_code_return_400(

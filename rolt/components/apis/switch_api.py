@@ -35,7 +35,7 @@ class SwitchListApi(APIView):
         type = serializers.CharField(required=False)
         type_code = serializers.CharField(required=False)
 
-        is_lubed = serializers.BooleanField(required=False)
+        is_lubed = serializers.BooleanField(required=False, allow_null=True)
 
         price_min = serializers.DecimalField(
             required=False,
@@ -123,6 +123,10 @@ class SwitchDetailApi(APIView):
 
     def get(self, request, code):
         switch = Switch.objects.get(code=code)
+        if not switch:
+            raise ApplicationError(
+                message="Switch with this code does not exist.",
+            )
         serializer = self.OutputSerializer(switch)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -324,7 +328,7 @@ class SwitchBulkCreateApi(APIView):
             # Validate component type
             type = type_dict.get(item["type_code"])  # noqa: A001
             if not type:
-                msg = f"ComponentType with code '{item['type_code']}' does not exist."
+                msg = f"Component type with code '{item['type_code']}' does not exist."
                 raise ApplicationError(msg)
 
             # Check uniqueness combo
