@@ -1,6 +1,12 @@
 from django.urls import include
 from django.urls import path
 
+from rolt.components.apis.case_api import CaseBulkCreateApi
+from rolt.components.apis.case_api import CaseCreateApi
+from rolt.components.apis.case_api import CaseDeleteApi
+from rolt.components.apis.case_api import CaseDetailApi
+from rolt.components.apis.case_api import CaseListApi
+from rolt.components.apis.case_api import CaseUpdateApi
 from rolt.components.apis.keycap_api import KeycapBulkCreateApi
 from rolt.components.apis.keycap_api import KeycapCreateApi
 from rolt.components.apis.keycap_api import KeycapDeleteApi
@@ -62,8 +68,19 @@ keycap_patterns = [
     path("<str:code>/delete/", KeycapDeleteApi.as_view(), name="keycap-delete"),
 ]
 
+case_patterns = [
+    path("", CaseListApi.as_view(), name="case-list"),
+    path("create/", CaseCreateApi.as_view(), name="case-create"),
+    path("bulk-create/", CaseBulkCreateApi.as_view(), name="case-bulk-create"),
+    path("<str:code>/", CaseDetailApi.as_view(), name="case-detail"),
+    path("<str:code>/update/", CaseUpdateApi.as_view(), name="case-update"),
+    path("<str:code>/delete/", CaseDeleteApi.as_view(), name="case-delete"),
+]
+
+
 urlpatterns = [
     path("switches/", include((switch_patterns, "switches"))),
     path("stabilizers/", include((stabilizer_patterns, "stabilizers"))),
     path("keycaps/", include((keycap_patterns, "keycaps"))),
+    path("cases/", include((case_patterns, "cases"))),
 ]
