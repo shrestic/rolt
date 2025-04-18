@@ -20,6 +20,7 @@ urlpatterns = [
     path("auth/", include("social_django.urls", namespace="social")),
     # Your stuff: custom urls includes go here
     path("accounts/", include("rolt.accounts.urls")),
+    path("manufacturers/", include("rolt.manufacturers.urls")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]

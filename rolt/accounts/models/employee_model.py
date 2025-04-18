@@ -44,3 +44,6 @@ class Employee(BaseModel):
 
     class Meta:
         ordering = ["user__first_name", "user__last_name"]
+        verbose_name = "Employee"
+        verbose_name_plural = "Employees"
+        db_table = "employee"
