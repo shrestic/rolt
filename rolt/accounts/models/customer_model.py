@@ -15,7 +15,6 @@ User = get_user_model()
 # Create your models here.
 class Customer(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    kms_key_id = models.CharField(max_length=500, blank=True, default="")
     phone = models.CharField(max_length=PHONE_LENGTH, default="", blank=True)
     address = models.TextField(default="", blank=True)
     birth_date = models.DateField(null=True, blank=True)

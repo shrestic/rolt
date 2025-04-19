@@ -19,7 +19,6 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(db_index=True, default=django.utils.timezone.now)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('kms_key_id', models.CharField(blank=True, default='', max_length=500)),
                 ('phone', models.CharField(blank=True, default='', max_length=10)),
                 ('address', models.TextField(blank=True, default='')),
                 ('birth_date', models.DateField(blank=True, null=True)),

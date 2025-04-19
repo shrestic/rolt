@@ -21,6 +21,7 @@ urlpatterns = [
     # Your stuff: custom urls includes go here
     path("accounts/", include("rolt.accounts.urls")),
     path("manufacturers/", include("rolt.manufacturers.urls")),
+    path("components/", include("rolt.components.urls")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
