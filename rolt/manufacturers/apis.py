@@ -63,7 +63,7 @@ class ManufacturerBulkCreateApi(APIView):
             existed_manufacturer = manufacturer_get(code=item["code"])
             if existed_manufacturer:
                 msg = "manufacturer with this code already exists"
-                raise ApplicationError(msg)
+                raise ApplicationError(message=msg)
         manufacturers = manufacturer_bulk_create(data=serializer.validated_data)
         serializer = self.ManufacturerSerializer(manufacturers, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

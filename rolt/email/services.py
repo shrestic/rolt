@@ -16,7 +16,7 @@ from rolt.email.tasks import email_send as email_send_task
 def email_failed(email: Email) -> Email:
     if email.status != Email.Status.SENDING:
         msg = f"Cannot fail non-sending emails. Current status is {email.status}"
-        raise ApplicationError(msg)
+        raise ApplicationError(message=msg)
 
     email, _ = model_update(
         instance=email,
@@ -30,14 +30,14 @@ def email_failed(email: Email) -> Email:
 def email_send(email: Email) -> Email:
     if email.status != Email.Status.SENDING:
         msg = f"Cannot send non-ready emails. Current status is {email.status}"
-        raise ApplicationError(msg)
+        raise ApplicationError(message=msg)
 
     if settings.EMAIL_SENDING_FAILURE_TRIGGER:
         failure_dice = secrets.SystemRandom().uniform(0, 1)
 
         if failure_dice <= settings.EMAIL_SENDING_FAILURE_RATE:
             msg = "Email sending failure triggered."
-            raise ApplicationError(msg)
+            raise ApplicationError(message=msg)
 
     subject = email.subject
     from_email = "styleguide-example@hacksoft.io"

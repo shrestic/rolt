@@ -34,7 +34,7 @@ class UserCreateSerializer(BaseUserCreateSerializer):
                 request and request.user.is_authenticated and request.user.is_superuser
             ):
                 msg = "Only superusers can create staff users."
-                raise ApplicationError(msg)
+                raise ApplicationError(message=msg)
 
         return attrs
 
