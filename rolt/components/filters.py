@@ -4,6 +4,7 @@ from django_filters import FilterSet
 from django_filters import NumberFilter
 
 from rolt.components.models.kit_model import Kit
+from rolt.components.models.switch_model import Switch
 
 
 class KitFilter(FilterSet):
@@ -47,6 +48,66 @@ class KitFilter(FilterSet):
             "manufacturer_code",
             "hot_swap",
             "knob",
+            "price_min",
+            "price_max",
+        ]
+
+
+class SwitchFilter(FilterSet):
+    name = CharFilter(field_name="name", lookup_expr="icontains")
+    type = CharFilter(field_name="type", lookup_expr="icontains")
+
+    sound_level = CharFilter(field_name="sound_level", lookup_expr="icontains")
+    stem_material = CharFilter(field_name="stem_material", lookup_expr="icontains")
+    housing_material = CharFilter(
+        field_name="housing_material",
+        lookup_expr="icontains",
+    )
+    pin_type = CharFilter(field_name="pin_type", lookup_expr="icontains")
+    compatible_with = CharFilter(field_name="compatible_with", lookup_expr="icontains")
+
+    manufacturer = CharFilter(field_name="manufacturer__label", lookup_expr="icontains")
+    manufacturer_code = CharFilter(
+        field_name="manufacturer__code",
+        lookup_expr="icontains",
+    )
+
+    factory_lubed = BooleanFilter(field_name="factory_lubed")
+    led_support = BooleanFilter(field_name="led_support")
+
+    actuation_force_min = NumberFilter(field_name="actuation_force", lookup_expr="gte")
+    actuation_force_max = NumberFilter(field_name="actuation_force", lookup_expr="lte")
+
+    bottom_out_force_min = NumberFilter(
+        field_name="bottom_out_force",
+        lookup_expr="gte",
+    )
+    bottom_out_force_max = NumberFilter(
+        field_name="bottom_out_force",
+        lookup_expr="lte",
+    )
+
+    price_min = NumberFilter(field_name="price_per_switch", lookup_expr="gte")
+    price_max = NumberFilter(field_name="price_per_switch", lookup_expr="lte")
+
+    class Meta:
+        model = Switch
+        fields = [
+            "name",
+            "type",
+            "sound_level",
+            "stem_material",
+            "housing_material",
+            "pin_type",
+            "compatible_with",
+            "manufacturer",
+            "manufacturer_code",
+            "factory_lubed",
+            "led_support",
+            "actuation_force_min",
+            "actuation_force_max",
+            "bottom_out_force_min",
+            "bottom_out_force_max",
             "price_min",
             "price_max",
         ]
