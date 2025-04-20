@@ -3,6 +3,7 @@ from django_filters import CharFilter
 from django_filters import FilterSet
 from django_filters import NumberFilter
 
+from rolt.components.models.keycap_model import Keycap
 from rolt.components.models.kit_model import Kit
 from rolt.components.models.switch_model import Switch
 
@@ -108,6 +109,60 @@ class SwitchFilter(FilterSet):
             "actuation_force_max",
             "bottom_out_force_min",
             "bottom_out_force_max",
+            "price_min",
+            "price_max",
+        ]
+
+
+class KeycapFilter(FilterSet):
+    name = CharFilter(field_name="name", lookup_expr="icontains")
+    material = CharFilter(field_name="material", lookup_expr="icontains")
+    profile = CharFilter(field_name="profile", lookup_expr="icontains")
+    legend_type = CharFilter(field_name="legend_type", lookup_expr="icontains")
+    compatibility = CharFilter(field_name="compatibility", lookup_expr="icontains")
+    layout_support = CharFilter(field_name="layout_support", lookup_expr="icontains")
+    colorway = CharFilter(field_name="colorway", lookup_expr="icontains")
+    theme_name = CharFilter(field_name="theme_name", lookup_expr="icontains")
+    texture = CharFilter(field_name="texture", lookup_expr="icontains")
+    sound_profile = CharFilter(field_name="sound_profile", lookup_expr="icontains")
+
+    manufacturer = CharFilter(field_name="manufacturer__label", lookup_expr="icontains")
+    manufacturer_code = CharFilter(
+        field_name="manufacturer__code",
+        lookup_expr="icontains",
+    )
+
+    shine_through = BooleanFilter(field_name="shine_through")
+
+    number_of_keys_min = NumberFilter(field_name="number_of_keys", lookup_expr="gte")
+    number_of_keys_max = NumberFilter(field_name="number_of_keys", lookup_expr="lte")
+
+    thickness_min = NumberFilter(field_name="thickness", lookup_expr="gte")
+    thickness_max = NumberFilter(field_name="thickness", lookup_expr="lte")
+
+    price_min = NumberFilter(field_name="price", lookup_expr="gte")
+    price_max = NumberFilter(field_name="price", lookup_expr="lte")
+
+    class Meta:
+        model = Keycap
+        fields = [
+            "name",
+            "material",
+            "profile",
+            "legend_type",
+            "shine_through",
+            "compatibility",
+            "layout_support",
+            "colorway",
+            "theme_name",
+            "texture",
+            "sound_profile",
+            "manufacturer",
+            "manufacturer_code",
+            "number_of_keys_min",
+            "number_of_keys_max",
+            "thickness_min",
+            "thickness_max",
             "price_min",
             "price_max",
         ]

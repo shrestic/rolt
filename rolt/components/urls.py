@@ -1,6 +1,12 @@
 from django.urls import include
 from django.urls import path
 
+from rolt.components.apis.keycap_api import KeycapBulkCreateApi
+from rolt.components.apis.keycap_api import KeycapCreateApi
+from rolt.components.apis.keycap_api import KeycapDeleteApi
+from rolt.components.apis.keycap_api import KeycapDetailApi
+from rolt.components.apis.keycap_api import KeycapListApi
+from rolt.components.apis.keycap_api import KeycapUpdateApi
 from rolt.components.apis.kit_api import KitBulkCreateApi
 from rolt.components.apis.kit_api import KitCreateApi
 from rolt.components.apis.kit_api import KitDeleteApi
@@ -45,7 +51,18 @@ switch_patterns = [
     path("<str:code>/delete/", SwitchDeleteApi.as_view(), name="switch-delete"),
 ]
 
+keycap_patterns = [
+    path("", KeycapListApi.as_view(), name="keycap-list"),
+    path("create/", KeycapCreateApi.as_view(), name="keycap-create"),
+    path("bulk-create/", KeycapBulkCreateApi.as_view(), name="keycap-bulk-create"),
+    path("<str:code>/", KeycapDetailApi.as_view(), name="keycap-detail"),
+    path("<str:code>/update/", KeycapUpdateApi.as_view(), name="keycap-update"),
+    path("<str:code>/delete/", KeycapDeleteApi.as_view(), name="keycap-delete"),
+]
+
+
 urlpatterns = [
     path("kits/", include(kit_patterns), name="kits"),
     path("switches/", include(switch_patterns), name="switches"),
+    path("keycaps/", include(keycap_patterns), name="keycaps"),
 ]
