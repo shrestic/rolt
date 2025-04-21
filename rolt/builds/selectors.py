@@ -1,7 +1,10 @@
 import uuid
 
+from django.db.models import QuerySet
+
 from rolt.accounts.models.customer_model import Customer
 from rolt.builds.models import Build
+from rolt.builds.models import Showcase
 
 
 def build_exists(
@@ -106,3 +109,25 @@ def build_check_duplicate_combo(
     qs = qs.filter(customer=customer) if customer else qs.filter(customer__isnull=True)
 
     return qs.exists()
+
+
+def showcase_list() -> QuerySet[Showcase]:
+    return (
+        Showcase.objects.select_related("build")
+        .filter(build__is_preset=True)
+        .order_by("-build__created_at")
+    )
+
+
+def showcase_get(
+    *,
+    showcase_id: uuid.UUID,
+) -> Showcase | None:
+    return Showcase.objects.select_related("build").filter(id=showcase_id).first()
+
+
+def showcase_get_by_build_id(
+    *,
+    build_id: uuid.UUID,
+) -> Showcase | None:
+    return Showcase.objects.select_related("build").filter(build_id=build_id).first()

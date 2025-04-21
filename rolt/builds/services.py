@@ -1,4 +1,5 @@
 from rolt.builds.models import Build
+from rolt.builds.models import Showcase
 
 
 def build_delete(*, instance: Build) -> None:
@@ -79,3 +80,22 @@ def build_update(  # noqa: PLR0913
 
     instance.save(update_fields=fields_to_update)
     return instance
+
+
+def showcase_create(
+    *,
+    build: Build,
+    title: str,
+    description: str = "",
+    image=None,
+) -> Showcase:
+    return Showcase.objects.create(
+        build=build,
+        title=title,
+        description=description,
+        image=image,
+    )
+
+
+def showcase_delete(*, showcase: Showcase) -> None:
+    showcase.delete()
