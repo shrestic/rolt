@@ -74,7 +74,7 @@ class TestSwitchApi:
         response = api_client.get("/components/switches/?price_min=3&price_max=6")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data["results"]) == 1
-        assert response.data["results"][0]["price_per_switch"] == 5  # noqa: PLR2004
+        assert float(response.data["results"][0]["price_per_switch"]) == 5  # noqa: PLR2004
 
     def test_filter_switches_by_factory_lubed_and_led_support(self, api_client):
         baker.make(Switch, factory_lubed=True, led_support=True)

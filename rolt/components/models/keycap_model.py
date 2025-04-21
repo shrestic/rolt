@@ -30,7 +30,7 @@ class Keycap(BaseModel):
     sound_profile = models.CharField(max_length=100)
 
     image = models.ImageField(upload_to="keycaps/", blank=True, null=True)
-    price = models.PositiveIntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         db_table = "keycap"
