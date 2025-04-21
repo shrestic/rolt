@@ -34,7 +34,7 @@ class Switch(BaseModel):
     compatible_with = models.CharField(max_length=255)
 
     image = models.ImageField(upload_to="switches/", blank=True, null=True)
-    price_per_switch = models.PositiveIntegerField()
+    price_per_switch = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         db_table = "switch"

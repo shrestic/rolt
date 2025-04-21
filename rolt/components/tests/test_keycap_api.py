@@ -183,11 +183,11 @@ class TestKeycapApi:
         assert response.data["results"][0]["profile"] == "Cherry"
 
     def test_if_filter_with_price_bounds_include_border_value(self, api_client):
-        baker.make(Keycap, price=100)
+        baker.make(Keycap, price=100.0)
         response = api_client.get("/components/keycaps/?price_min=100&price_max=100")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data["results"]) == 1
-        assert response.data["results"][0]["price"] == 100.00  # noqa: PLR2004
+        assert float(response.data["results"][0]["price"]) == 100.0  # noqa: PLR2004
 
     def test_if_pagination_respects_default_limit(self, api_client):
         baker.make(Keycap, _quantity=15)

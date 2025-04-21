@@ -67,4 +67,6 @@ def inline_serializer(*, fields, data=None, **kwargs):
 
 
 def user_in_group(user, group_name: str) -> bool:
-    return user.groups.filter(name__iexact=group_name).exists()
+    if not user or not user.is_authenticated:
+        return False
+    return user.groups.filter(name=group_name).exists()

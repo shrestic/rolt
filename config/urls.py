@@ -22,6 +22,7 @@ urlpatterns = [
     path("accounts/", include("rolt.accounts.urls")),
     path("manufacturers/", include("rolt.manufacturers.urls")),
     path("components/", include("rolt.components.urls")),
+    path("builds/", include("rolt.builds.urls")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]

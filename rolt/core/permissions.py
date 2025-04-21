@@ -61,3 +61,7 @@ class IsSupportOrProductManager(IsInAllowedGroups):
 
 class IsCustomerOrTechnician(IsInAllowedGroups):
     allowed_groups = ["Customer", "Technician"]
+
+
+class IsCustomerOrProductManager(IsInAllowedGroups):
+    allowed_groups = ["Customer", "Product Manager"]
