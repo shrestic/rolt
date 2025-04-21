@@ -1,24 +1,24 @@
 from django.urls import include
 from django.urls import path
 
-from rolt.components.apis.keycap_api import KeycapBulkCreateApi
-from rolt.components.apis.keycap_api import KeycapCreateApi
-from rolt.components.apis.keycap_api import KeycapDeleteApi
-from rolt.components.apis.keycap_api import KeycapDetailApi
-from rolt.components.apis.keycap_api import KeycapListApi
-from rolt.components.apis.keycap_api import KeycapUpdateApi
-from rolt.components.apis.kit_api import KitBulkCreateApi
-from rolt.components.apis.kit_api import KitCreateApi
-from rolt.components.apis.kit_api import KitDeleteApi
-from rolt.components.apis.kit_api import KitDetailApi
-from rolt.components.apis.kit_api import KitListApi
-from rolt.components.apis.kit_api import KitUpdateApi
-from rolt.components.apis.switch_api import SwitchBulkCreateApi
-from rolt.components.apis.switch_api import SwitchCreateApi
-from rolt.components.apis.switch_api import SwitchDeleteApi
-from rolt.components.apis.switch_api import SwitchDetailApi
-from rolt.components.apis.switch_api import SwitchListApi
-from rolt.components.apis.switch_api import SwitchUpdateApi
+from rolt.components.apis.keycap_apis import KeycapBulkCreateApi
+from rolt.components.apis.keycap_apis import KeycapCreateApi
+from rolt.components.apis.keycap_apis import KeycapDeleteApi
+from rolt.components.apis.keycap_apis import KeycapDetailApi
+from rolt.components.apis.keycap_apis import KeycapListApi
+from rolt.components.apis.keycap_apis import KeycapUpdateApi
+from rolt.components.apis.kit_apis import KitBulkCreateApi
+from rolt.components.apis.kit_apis import KitCreateApi
+from rolt.components.apis.kit_apis import KitDeleteApi
+from rolt.components.apis.kit_apis import KitDetailApi
+from rolt.components.apis.kit_apis import KitListApi
+from rolt.components.apis.kit_apis import KitUpdateApi
+from rolt.components.apis.switch_apis import SwitchBulkCreateApi
+from rolt.components.apis.switch_apis import SwitchCreateApi
+from rolt.components.apis.switch_apis import SwitchDeleteApi
+from rolt.components.apis.switch_apis import SwitchDetailApi
+from rolt.components.apis.switch_apis import SwitchListApi
+from rolt.components.apis.switch_apis import SwitchUpdateApi
 
 kit_patterns = [
     path("", KitListApi.as_view(), name="kit-list"),

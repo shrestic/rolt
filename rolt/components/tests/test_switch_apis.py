@@ -7,7 +7,7 @@ from rolt.manufacturers.models import Manufacturer
 
 
 @pytest.mark.django_db
-class TestSwitchApi:
+class TestSwitchApis:
     def test_if_anonymous_user_can_get_switch_list_return_200(self, api_client):
         baker.make(Switch, _quantity=3)
         response = api_client.get("/components/switches/")

@@ -18,9 +18,9 @@ from rolt.builds.services import build_delete
 from rolt.builds.services import build_update
 from rolt.common.utils import inline_serializer
 from rolt.common.utils import user_in_group
-from rolt.components.selectors.keycap_selector import keycap_get
-from rolt.components.selectors.kit_selector import kit_get
-from rolt.components.selectors.switch_selector import switch_get
+from rolt.components.selectors.keycap_selectors import keycap_get
+from rolt.components.selectors.kit_selectors import kit_get
+from rolt.components.selectors.switch_selectors import switch_get
 from rolt.core.exceptions import ApplicationError
 from rolt.core.permissions import IsCustomer
 from rolt.core.permissions import IsCustomerOrProductManager
