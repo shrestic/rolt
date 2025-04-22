@@ -4,16 +4,18 @@ from django.db.models import QuerySet
 
 from rolt.accounts.models.customer_model import Customer
 from rolt.builds.models import Build
-from rolt.builds.models import Showcase
+from rolt.components.models.keycap_model import Keycap
+from rolt.components.models.kit_model import Kit
+from rolt.components.models.switch_model import Switch
 
 
 def build_exists(
     *,
-    kit,
-    switch,
-    keycap,
+    kit: Kit,
+    switch: Switch,
+    keycap: Keycap,
     switch_quantity: int,
-    customer=None,
+    customer: Customer | None,
 ) -> bool:
     """
     Check if a build with the given component combination already exists.
@@ -39,18 +41,20 @@ def build_exists(
 
 
 # Returns all builds of a specific customer.
-def customer_build_list(*, customer) -> list[Build]:
+def customer_build_list(*, customer) -> QuerySet[Build]:
     return (
         Build.objects.select_related("kit", "switch", "keycap", "customer")
+        .prefetch_related("selected_services__service")
         .filter(customer=customer, is_preset=False)
         .order_by("-created_at")
     )
 
 
 # Returns all builds that are marked as presets.
-def preset_builds_list() -> list[Build]:
+def preset_builds_list() -> QuerySet[Build]:
     return (
         Build.objects.select_related("kit", "switch", "keycap")
+        .prefetch_related("selected_services__service")
         .filter(is_preset=True)
         .order_by("-created_at")
     )
@@ -86,11 +90,11 @@ def preset_build_get_by_id(*, id: uuid.UUID) -> Build | None:  # noqa: A002
 
 def build_check_duplicate_combo(
     *,
-    kit,
-    switch,
-    keycap,
+    kit: Kit,
+    switch: Switch,
+    keycap: Keycap,
     exclude_build_id=None,
-    customer=None,  # None if preset
+    customer: Customer | None,  # None if preset
 ) -> bool:
     """
     Check if the kit-switch-keycap combination already exists (excluding the current build).
@@ -109,25 +113,3 @@ def build_check_duplicate_combo(
     qs = qs.filter(customer=customer) if customer else qs.filter(customer__isnull=True)
 
     return qs.exists()
-
-
-def showcase_list() -> QuerySet[Showcase]:
-    return (
-        Showcase.objects.select_related("build")
-        .filter(build__is_preset=True)
-        .order_by("-build__created_at")
-    )
-
-
-def showcase_get(
-    *,
-    id: uuid.UUID,  # noqa: A002
-) -> Showcase | None:
-    return Showcase.objects.select_related("build").filter(id=id).first()
-
-
-def showcase_get_by_build_id(
-    *,
-    build_id: uuid.UUID,
-) -> Showcase | None:
-    return Showcase.objects.select_related("build").filter(build_id=build_id).first()

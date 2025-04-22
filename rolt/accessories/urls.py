@@ -10,17 +10,17 @@ urlpatterns = [
     path("", AccessoryListApi.as_view(), name="accessory-list"),
     path("create/", AccessoryCreateApi.as_view(), name="accessory-create"),
     path(
-        "<int:pk>/",
+        "<uuid:pk>/",
         AccessoryDetailApi.as_view(),
         name="accessory-detail",
     ),
     path(
-        "<int:pk>/update/",
+        "<uuid:pk>/update/",
         AccessoryUpdateApi.as_view(),
         name="accessory-update",
     ),
     path(
-        "<int:pk>/delete/",
+        "<uuid:pk>/delete/",
         AccessoryDeleteApi.as_view(),
         name="accessory-delete",
     ),

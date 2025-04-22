@@ -55,6 +55,38 @@ class Build(BaseModel):
         return self.name
 
 
+class Service(models.Model):
+    code = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        db_table = "service"
+        verbose_name = "Service"
+        verbose_name_plural = "Services"
+
+    def __str__(self):
+        return self.name
+
+
+class SelectedService(models.Model):
+    build = models.ForeignKey(
+        Build,
+        on_delete=models.CASCADE,
+        related_name="selected_services",
+    )
+    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        db_table = "selected_service"
+        unique_together = ("build", "service")
+
+    def __str__(self):
+        return f"{self.build.name} - {self.service.name}"
+
+
 class Showcase(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     build = models.OneToOneField(
