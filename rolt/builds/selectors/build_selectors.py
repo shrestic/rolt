@@ -4,8 +4,6 @@ from django.db.models import QuerySet
 
 from rolt.accounts.models.customer_model import Customer
 from rolt.builds.models import Build
-from rolt.builds.models import Service
-from rolt.builds.models import Showcase
 from rolt.components.models.keycap_model import Keycap
 from rolt.components.models.kit_model import Kit
 from rolt.components.models.switch_model import Switch
@@ -43,7 +41,7 @@ def build_exists(
 
 
 # Returns all builds of a specific customer.
-def customer_build_list(*, customer) -> list[Build]:
+def customer_build_list(*, customer) -> QuerySet[Build]:
     return (
         Build.objects.select_related("kit", "switch", "keycap", "customer")
         .prefetch_related("selected_services__service")
@@ -53,7 +51,7 @@ def customer_build_list(*, customer) -> list[Build]:
 
 
 # Returns all builds that are marked as presets.
-def preset_builds_list() -> list[Build]:
+def preset_builds_list() -> QuerySet[Build]:
     return (
         Build.objects.select_related("kit", "switch", "keycap")
         .prefetch_related("selected_services__service")
@@ -115,43 +113,3 @@ def build_check_duplicate_combo(
     qs = qs.filter(customer=customer) if customer else qs.filter(customer__isnull=True)
 
     return qs.exists()
-
-
-def showcase_list() -> QuerySet[Showcase]:
-    return (
-        Showcase.objects.select_related("build")
-        .filter(build__is_preset=True)
-        .order_by("-build__created_at")
-    )
-
-
-def showcase_get(
-    *,
-    id: uuid.UUID,  # noqa: A002
-) -> Showcase | None:
-    return Showcase.objects.select_related("build").filter(id=id).first()
-
-
-def showcase_get_by_build_id(
-    *,
-    build_id: uuid.UUID,
-) -> Showcase | None:
-    return Showcase.objects.select_related("build").filter(build_id=build_id).first()
-
-
-def service_list_by_codes(
-    *,
-    codes: list[str],
-) -> QuerySet[Service]:
-    return Service.objects.filter(code__in=codes)
-
-
-def service_list() -> list[Service]:
-    return list(Service.objects.all())
-
-
-def service_get_by_code(
-    *,
-    code: str,
-) -> Service | None:
-    return Service.objects.filter(code=code).first()

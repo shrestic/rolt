@@ -5,12 +5,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from rolt.builds.models import Showcase
-from rolt.builds.selectors import build_get_by_id
-from rolt.builds.selectors import showcase_get
-from rolt.builds.selectors import showcase_get_by_build_id
-from rolt.builds.selectors import showcase_list
-from rolt.builds.services import showcase_create
-from rolt.builds.services import showcase_delete
+from rolt.builds.selectors.build_selectors import build_get_by_id
+from rolt.builds.selectors.showcase_selectors import showcase_get
+from rolt.builds.selectors.showcase_selectors import showcase_get_by_build_id
+from rolt.builds.selectors.showcase_selectors import showcase_list
+from rolt.builds.services.showcase_services import showcase_create
+from rolt.builds.services.showcase_services import showcase_delete
 from rolt.core.exceptions import ApplicationError
 from rolt.core.permissions import IsProductManager
 

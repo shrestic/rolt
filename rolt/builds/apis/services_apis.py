@@ -4,10 +4,10 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from rolt.builds.models import Service
-from rolt.builds.selectors import service_get_by_code
-from rolt.builds.selectors import service_list
-from rolt.builds.services import service_create
-from rolt.builds.services import service_delete
+from rolt.builds.selectors.service_selectors import service_get_by_code
+from rolt.builds.selectors.service_selectors import service_list
+from rolt.builds.services.service_services import service_create
+from rolt.builds.services.service_services import service_delete
 from rolt.core.exceptions import ApplicationError
 from rolt.core.permissions import IsProductManager
 
