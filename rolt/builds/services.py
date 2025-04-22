@@ -1,37 +1,52 @@
+from rolt.accounts.models.customer_model import Customer
 from rolt.builds.models import Build
+from rolt.builds.models import SelectedService
+from rolt.builds.models import Service
 from rolt.builds.models import Showcase
+from rolt.components.models.keycap_model import Keycap
+from rolt.components.models.kit_model import Kit
+from rolt.components.models.switch_model import Switch
 
 
-def build_delete(*, instance: Build) -> None:
-    instance.delete()
-
-
-def calculate_total_price(kit, switch, switch_quantity, keycap):
-    return (
+def calculate_total_price(
+    kit: Kit,
+    switch: Switch,
+    switch_quantity: int,
+    keycap: Keycap,
+    extra_services: list[Service] | None,
+):
+    base_price = (
         (kit.price or 0)
         + (switch.price_per_switch or 0) * switch_quantity
         + (keycap.price or 0)
     )
+    if extra_services:
+        addon_price = sum(service.price for service in extra_services)
+    else:
+        addon_price = 0
+    return base_price + addon_price
 
 
 def build_create(  # noqa: PLR0913
     *,
-    name,
-    kit,
-    switch,
-    keycap,
-    switch_quantity,
-    customer=None,
+    name: str,
+    kit: Kit,
+    switch: Switch,
+    keycap: Keycap,
+    switch_quantity: int,
+    customer: Customer | None,
     is_preset=False,
+    selected_services: list[Service] | None,  # List[Service] or None
 ) -> Build:
     total_price = calculate_total_price(
         kit=kit,
         switch=switch,
         switch_quantity=switch_quantity,
         keycap=keycap,
+        extra_services=selected_services if not is_preset else None,
     )
 
-    return Build.objects.create(
+    build = Build.objects.create(
         name=name,
         kit=kit,
         switch=switch,
@@ -42,17 +57,30 @@ def build_create(  # noqa: PLR0913
         is_preset=is_preset,
     )
 
+    # Only attach services if not preset
+    if not is_preset and selected_services:
+        for service in selected_services:
+            SelectedService.objects.create(
+                build=build,
+                service=service,
+                price=service.price,
+            )
+
+    return build
+
 
 def build_update(  # noqa: PLR0913
     *,
     instance: Build,
-    name=None,
-    kit=None,
-    switch=None,
-    keycap=None,
-    switch_quantity=None,
+    name: str | None,
+    kit: Kit | None,
+    switch: Switch | None,
+    keycap: Keycap | None,
+    switch_quantity: int | None,
+    selected_services: list[Service] | None,
 ) -> Build:
     fields_to_update = []
+
     if name:
         instance.name = name
         fields_to_update.append("name")
@@ -69,17 +97,35 @@ def build_update(  # noqa: PLR0913
         instance.switch_quantity = switch_quantity
         fields_to_update.append("switch_quantity")
 
-    # Recalculate total_price
+    # Update selected services if provided (for custom builds only)
+    if not instance.is_preset and selected_services is not None:
+        # Remove old
+        SelectedService.objects.filter(build=instance).delete()
+        # Add new
+        for service in selected_services:
+            SelectedService.objects.create(
+                build=instance,
+                service=service,
+                price=service.price,
+            )
+
+    # Recalculate price
+    extra_services = selected_services if not instance.is_preset else None
     instance.total_price = calculate_total_price(
         kit=instance.kit,
         switch=instance.switch,
         switch_quantity=instance.switch_quantity,
         keycap=instance.keycap,
+        extra_services=extra_services,
     )
     fields_to_update.append("total_price")
 
     instance.save(update_fields=fields_to_update)
     return instance
+
+
+def build_delete(*, instance: Build) -> None:
+    instance.delete()
 
 
 def showcase_create(
@@ -99,3 +145,22 @@ def showcase_create(
 
 def showcase_delete(*, showcase: Showcase) -> None:
     showcase.delete()
+
+
+def service_create(
+    *,
+    code: str,
+    name: str,
+    description: str = "",
+    price: float = 0.0,
+) -> Service:
+    return Service.objects.create(
+        code=code,
+        name=name,
+        description=description,
+        price=price,
+    )
+
+
+def service_delete(*, instance: Service) -> None:
+    instance.delete()

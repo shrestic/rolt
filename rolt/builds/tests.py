@@ -3,6 +3,8 @@ from model_bakery import baker
 from rest_framework import status
 
 from rolt.builds.models import Build
+from rolt.builds.models import SelectedService
+from rolt.builds.models import Service
 from rolt.builds.models import Showcase
 from rolt.components.models import Keycap
 from rolt.components.models import Kit
@@ -96,7 +98,7 @@ class TestBuildApi:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["id"] == str(build.id)
 
-    def test_customer_can_create_build(self, api_client, make_customer):
+    def test_customer_can_create_build_with_services(self, api_client, make_customer):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -106,17 +108,55 @@ class TestBuildApi:
         baker.make(Switch, manufacturer=manufacturer, code="SW123", price_per_switch=5)
         baker.make(Keycap, manufacturer=manufacturer, code="KC123", price=15.7)
 
+        service1 = baker.make(Service, code="SRV1", price=10)
+        service2 = baker.make(Service, code="SRV2", price=5.5)
+
         payload = {
-            "name": "My Build",
+            "name": "My Build With Services",
             "kit_code": "KIT123",
             "switch_code": "SW123",
             "keycap_code": "KC123",
             "switch_quantity": 87,
+            "service_codes": ["SRV1", "SRV2"],
         }
 
         response = api_client.post("/builds/create/", data=payload, format="json")
         assert response.status_code == status.HTTP_201_CREATED
-        assert Build.objects.filter(id=response.data["id"]).exists()
+        build = Build.objects.get(id=response.data["id"])
+
+        selected = SelectedService.objects.filter(build=build)
+        assert selected.count() == 2  # noqa: PLR2004
+        assert selected.filter(service=service1).exists()
+        assert selected.filter(service=service2).exists()
+
+    def test_customer_can_see_selected_services_in_detail(
+        self,
+        api_client,
+        make_customer,
+    ):
+        customer = make_customer()
+        user = customer.user
+        api_client.force_authenticate(user=user)
+
+        manufacturer = baker.make(Manufacturer)
+        kit = baker.make(Kit, manufacturer=manufacturer)
+        switch = baker.make(Switch, manufacturer=manufacturer)
+        keycap = baker.make(Keycap, manufacturer=manufacturer)
+        service = baker.make(Service)
+
+        build = baker.make(
+            Build,
+            customer=customer,
+            kit=kit,
+            switch=switch,
+            keycap=keycap,
+        )
+        baker.make(SelectedService, build=build, service=service, price=service.price)
+
+        response = api_client.get(f"/builds/customer/{build.id}/")
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["selected_services"]) == 1
+        assert response.data["selected_services"][0]["service"]["code"] == service.code
 
     def test_customer_can_update_own_build(self, api_client, make_customer):
         customer = make_customer()
@@ -125,7 +165,7 @@ class TestBuildApi:
 
         manufacturer = baker.make(Manufacturer)
         kit1 = baker.make(Kit, manufacturer=manufacturer, code="KIT1", price=10.8)
-        kit2 = baker.make(Kit, manufacturer=manufacturer, code="KIT2", price=12.0)  # noqa: F841
+        baker.make(Kit, manufacturer=manufacturer, code="KIT2", price=12.0)
         switch = baker.make(
             Switch,
             manufacturer=manufacturer,
@@ -273,3 +313,77 @@ class TestShowcaseApi:
         response = api_client.delete(f"/builds/showcases/{showcase.id}/delete/")
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Showcase.objects.filter(id=showcase.id).exists()
+
+
+@pytest.mark.django_db
+class TestServiceApi:
+    def test_product_manager_can_create_service(
+        self,
+        api_client,
+        make_employee_is_product_manager,
+    ):
+        user = make_employee_is_product_manager()
+        api_client.force_authenticate(user=user)
+
+        payload = {
+            "code": "LUBE_SERVICE",
+            "name": "Lube Switches",
+            "price": "15.00",
+            "description": "Lube all your switches for smoother feel",
+        }
+
+        response = api_client.post(
+            "/builds/services/create/",
+            data=payload,
+            format="json",
+        )
+        assert response.status_code == status.HTTP_201_CREATED
+        assert Service.objects.filter(code="LUBE_SERVICE").exists()
+
+    def test_cannot_create_duplicate_service_code(
+        self,
+        api_client,
+        make_employee_is_product_manager,
+    ):
+        user = make_employee_is_product_manager()
+        api_client.force_authenticate(user=user)
+
+        Service.objects.create(code="DUPLICATE", name="Dup", price=5)
+
+        payload = {
+            "code": "DUPLICATE",
+            "name": "New Dup",
+            "price": "10.00",
+        }
+
+        response = api_client.post(
+            "/builds/services/create/",
+            data=payload,
+            format="json",
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_product_manager_can_delete_service(
+        self,
+        api_client,
+        make_employee_is_product_manager,
+    ):
+        user = make_employee_is_product_manager()
+        api_client.force_authenticate(user=user)
+
+        Service.objects.create(code="DELETE_ME", name="Temp", price=1)
+
+        response = api_client.delete("/builds/services/DELETE_ME/delete/")
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not Service.objects.filter(code="DELETE_ME").exists()
+
+    def test_delete_nonexistent_service_should_fail(
+        self,
+        api_client,
+        make_employee_is_product_manager,
+    ):
+        user = make_employee_is_product_manager()
+        api_client.force_authenticate(user=user)
+
+        response = api_client.delete("/builds/services/NOT_FOUND/delete/")
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

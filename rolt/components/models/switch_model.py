@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 from rolt.common.models import BaseModel
@@ -5,13 +7,14 @@ from rolt.manufacturers.models import Manufacturer
 
 
 class Switch(BaseModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     code = models.CharField(max_length=50, unique=True, db_index=True)
+    name = models.CharField(max_length=255)
     manufacturer = models.ForeignKey(
         Manufacturer,
         on_delete=models.CASCADE,
         related_name="switches",
     )
-    name = models.CharField(max_length=255)
     type = models.CharField(max_length=100)
 
     actuation_force = models.PositiveIntegerField()

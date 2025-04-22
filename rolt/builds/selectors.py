@@ -4,16 +4,20 @@ from django.db.models import QuerySet
 
 from rolt.accounts.models.customer_model import Customer
 from rolt.builds.models import Build
+from rolt.builds.models import Service
 from rolt.builds.models import Showcase
+from rolt.components.models.keycap_model import Keycap
+from rolt.components.models.kit_model import Kit
+from rolt.components.models.switch_model import Switch
 
 
 def build_exists(
     *,
-    kit,
-    switch,
-    keycap,
+    kit: Kit,
+    switch: Switch,
+    keycap: Keycap,
     switch_quantity: int,
-    customer=None,
+    customer: Customer | None,
 ) -> bool:
     """
     Check if a build with the given component combination already exists.
@@ -42,6 +46,7 @@ def build_exists(
 def customer_build_list(*, customer) -> list[Build]:
     return (
         Build.objects.select_related("kit", "switch", "keycap", "customer")
+        .prefetch_related("selected_services__service")
         .filter(customer=customer, is_preset=False)
         .order_by("-created_at")
     )
@@ -51,6 +56,7 @@ def customer_build_list(*, customer) -> list[Build]:
 def preset_builds_list() -> list[Build]:
     return (
         Build.objects.select_related("kit", "switch", "keycap")
+        .prefetch_related("selected_services__service")
         .filter(is_preset=True)
         .order_by("-created_at")
     )
@@ -86,11 +92,11 @@ def preset_build_get_by_id(*, id: uuid.UUID) -> Build | None:  # noqa: A002
 
 def build_check_duplicate_combo(
     *,
-    kit,
-    switch,
-    keycap,
+    kit: Kit,
+    switch: Switch,
+    keycap: Keycap,
     exclude_build_id=None,
-    customer=None,  # None if preset
+    customer: Customer | None,  # None if preset
 ) -> bool:
     """
     Check if the kit-switch-keycap combination already exists (excluding the current build).
@@ -131,3 +137,21 @@ def showcase_get_by_build_id(
     build_id: uuid.UUID,
 ) -> Showcase | None:
     return Showcase.objects.select_related("build").filter(build_id=build_id).first()
+
+
+def service_list_by_codes(
+    *,
+    codes: list[str],
+) -> QuerySet[Service]:
+    return Service.objects.filter(code__in=codes)
+
+
+def service_list() -> list[Service]:
+    return list(Service.objects.all())
+
+
+def service_get_by_code(
+    *,
+    code: str,
+) -> Service | None:
+    return Service.objects.filter(code=code).first()
