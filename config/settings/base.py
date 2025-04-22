@@ -90,6 +90,7 @@ LOCAL_APPS = [
     "rolt.manufacturers",
     "rolt.components",
     "rolt.builds",
+    "rolt.accessories",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
