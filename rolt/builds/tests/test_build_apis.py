@@ -32,7 +32,7 @@ class TestBuildApi:
             _quantity=2,
         )
 
-        response = api_client.get("/builds/customer/")
+        response = api_client.get("/builds/my/")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 2  # noqa: PLR2004
 
@@ -74,7 +74,7 @@ class TestBuildApi:
             keycap=keycap,
         )
 
-        response = api_client.get(f"/builds/customer/{build.id}/")
+        response = api_client.get(f"/builds/my/{build.id}/")
         assert response.status_code == status.HTTP_200_OK
         assert response.data["id"] == str(build.id)
 
@@ -152,7 +152,7 @@ class TestBuildApi:
         )
         baker.make(SelectedService, build=build, service=service, price=service.price)
 
-        response = api_client.get(f"/builds/customer/{build.id}/")
+        response = api_client.get(f"/builds/my/{build.id}/")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data["selected_services"]) == 1
         assert response.data["selected_services"][0]["service"]["code"] == service.code

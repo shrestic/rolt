@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,7 +14,7 @@ from rolt.core.permissions import IsProductManager
 
 
 class ServiceListApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [AllowAny]
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:

@@ -27,11 +27,11 @@ urlpatterns = [
     # -------------------------
     # Customer builds (private builds owned by users)
     # -------------------------
-    path("customer/", CustomerBuildListApi.as_view(), name="customer-build-list"),
+    path("my/", CustomerBuildListApi.as_view(), name="customer-build-list"),
     path(
-        "customer/<uuid:build_id>/",
+        "my/<uuid:build_id>/",
         CustomerBuildDetailApi.as_view(),
-        name="customer-build-detail",
+        name="my-build-detail",
     ),
     # -------------------------
     # Create / Update / Delete builds (shared endpoint for both customer & preset)

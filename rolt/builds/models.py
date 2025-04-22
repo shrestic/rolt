@@ -60,12 +60,11 @@ class Service(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    is_default_for_preset = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "build_service"
-        verbose_name = "Build Service"
-        verbose_name_plural = "Build Services"
+        db_table = "service"
+        verbose_name = "Service"
+        verbose_name_plural = "Services"
 
     def __str__(self):
         return self.name
@@ -81,7 +80,7 @@ class SelectedService(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
-        db_table = "build_selected_service"
+        db_table = "selected_service"
         unique_together = ("build", "service")
 
     def __str__(self):
