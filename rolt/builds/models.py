@@ -46,7 +46,7 @@ class Build(BaseModel):
     is_preset = models.BooleanField(default=False)
 
     class Meta:
-        db_table = "builds"
+        db_table = "build"
         ordering = ["-created_at"]
         verbose_name = "Build"
         verbose_name_plural = "Builds"

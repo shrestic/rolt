@@ -187,7 +187,7 @@ class TestShowcaseApi:
         build = baker.make(Build, is_preset=True, kit=kit, switch=switch, keycap=keycap)
         baker.make(Showcase, build=build, title="Featured Build")
 
-        response = api_client.get("/builds/showcase/")
+        response = api_client.get("/builds/showcases/")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 1
         assert response.data[0]["id"] == str(build.id)
@@ -219,7 +219,11 @@ class TestShowcaseApi:
             ],
         }
 
-        response = api_client.post("/builds/showcase/add/", data=payload, format="json")
+        response = api_client.post(
+            "/builds/showcases/create/",
+            data=payload,
+            format="json",
+        )
         assert response.status_code == status.HTTP_201_CREATED
         assert str(builds[0].id) in response.data["added"]
         assert str(builds[1].id) in response.data["added"]
@@ -247,7 +251,11 @@ class TestShowcaseApi:
             ],
         }
 
-        response = api_client.post("/builds/showcase/add/", data=payload, format="json")
+        response = api_client.post(
+            "/builds/showcases/create/",
+            data=payload,
+            format="json",
+        )
         assert response.status_code == status.HTTP_201_CREATED
         assert str(build.id) in response.data["skipped"]
 
@@ -262,6 +270,6 @@ class TestShowcaseApi:
         build = baker.make(Build, is_preset=True)
         showcase = baker.make(Showcase, build=build)
 
-        response = api_client.delete(f"/builds/showcase/{showcase.id}/delete/")
+        response = api_client.delete(f"/builds/showcases/{showcase.id}/delete/")
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Showcase.objects.filter(id=showcase.id).exists()

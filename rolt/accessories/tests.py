@@ -21,7 +21,7 @@ class TestAccessoryApi:
         response = api_client.get(f"/accessories/{accessory.id}/")
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["id"] == str(accessory.id)
+        assert response.data["id"] == accessory.id
 
     def test_if_product_manager_can_create_accessory(
         self,

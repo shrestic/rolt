@@ -39,10 +39,10 @@ urlpatterns = [
     # -------------------------
     # Showcase APIs (display featured preset builds)
     # -------------------------
-    path("showcase/", ShowcaseListApi.as_view(), name="showcase-list"),
-    path("showcase/add/", ShowcaseAddApi.as_view(), name="showcase-add"),
+    path("showcases/", ShowcaseListApi.as_view(), name="showcase-list"),
+    path("showcases/create/", ShowcaseAddApi.as_view(), name="showcase-create"),
     path(
-        "showcase/<uuid:pk>/delete/",
+        "showcases/<uuid:pk>/delete/",
         ShowcaseDeleteApi.as_view(),
         name="showcase-delete",
     ),

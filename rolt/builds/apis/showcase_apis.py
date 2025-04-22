@@ -102,7 +102,7 @@ class ShowcaseDeleteApi(APIView):
     permission_classes = [IsProductManager]
 
     def delete(self, request, pk):
-        showcase = showcase_get(showcase_id=pk)
+        showcase = showcase_get(id=pk)
         if not showcase:
             msg = "Showcase not found"
             raise ApplicationError(msg)

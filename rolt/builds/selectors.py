@@ -66,19 +66,19 @@ def build_get_by_id(*, id: uuid.UUID) -> Build | None:  # noqa: A002
 
 def customer_build_get_by_id(
     *,
-    build_id: uuid.UUID,
+    id: uuid.UUID,  # noqa: A002
     customer: Customer,
 ) -> Build | None:
     return (
-        Build.objects.filter(id=build_id, customer=customer)
+        Build.objects.filter(id=id, customer=customer)
         .select_related("kit", "switch", "keycap", "customer")
         .first()
     )
 
 
-def preset_build_get_by_id(*, build_id: uuid.UUID) -> Build | None:
+def preset_build_get_by_id(*, id: uuid.UUID) -> Build | None:  # noqa: A002
     return (
-        Build.objects.filter(customer__isnull=True, id=build_id)
+        Build.objects.filter(customer__isnull=True, id=id)
         .select_related("kit", "switch", "keycap")
         .first()
     )
@@ -121,9 +121,9 @@ def showcase_list() -> QuerySet[Showcase]:
 
 def showcase_get(
     *,
-    showcase_id: uuid.UUID,
+    id: uuid.UUID,  # noqa: A002
 ) -> Showcase | None:
-    return Showcase.objects.select_related("build").filter(id=showcase_id).first()
+    return Showcase.objects.select_related("build").filter(id=id).first()
 
 
 def showcase_get_by_build_id(

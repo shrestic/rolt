@@ -89,7 +89,7 @@ class CustomerBuildDetailApi(APIView):
         if customer is None:
             raise ApplicationError(message="Customer not found")
         build = customer_build_get_by_id(
-            build_id=build_id,
+            id=build_id,
             customer=customer,
         )
         if not build:
@@ -103,7 +103,7 @@ class PresetBuildDetailApi(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, build_id):
-        build = preset_build_get_by_id(build_id=build_id)
+        build = preset_build_get_by_id(id=build_id)
         if not build:
             msg = "Preset build not found"
             raise ApplicationError(msg)
