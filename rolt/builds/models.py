@@ -59,7 +59,7 @@ class Build(BaseModel):
 class Service(models.Model):
     code = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, default="")
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(
         upload_to="accessories/",
@@ -103,7 +103,7 @@ class Showcase(BaseModel):
         limit_choices_to={"is_preset": True},
     )
     title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, default="")
     image = models.ImageField(
         upload_to="build_showcases/",
         null=True,

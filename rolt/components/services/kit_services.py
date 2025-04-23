@@ -28,6 +28,7 @@ class KitData:
     weight: float
     image: Any
     price: int
+    description: str
 
 
 @clear_kit_cache
@@ -56,6 +57,7 @@ def kit_update(*, instance: Kit, data: dict) -> Kit:
         "weight",
         "image",
         "price",
+        "description",
     ]
     kit, _ = model_update(instance=instance, fields=fields, data=data)
     return kit

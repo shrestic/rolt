@@ -51,6 +51,7 @@ class TestSwitchApis:
             "compatible_with": "MX",
             "image": None,
             "price_per_switch": 4,
+            "description": "A smooth linear switch with a light actuation force.",
         }
         response = api_client.post(
             "/components/switches/create/",

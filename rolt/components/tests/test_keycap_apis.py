@@ -49,6 +49,7 @@ class TestKeycapApis:
             "thickness": 1.5,
             "image": None,
             "price": 130,
+            "description": "A set of keycaps with a cyberpunk theme.",
         }
         response = api_client.post(
             "/components/keycaps/create/",

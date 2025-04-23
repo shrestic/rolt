@@ -300,7 +300,16 @@ CELERY_TASK_SEND_SENT_EVENT = True
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 
 # django-rest-framework
-COMPONENTS = ["keycap", "switch", "kit", "build", "service", "showcase", "accessory"]
+COMPONENTS = [
+    "keycap",
+    "switch",
+    "kit",
+    "build",
+    "service",
+    "showcase",
+    "accessory",
+    "manufacturer",
+]
 ACTIONS = {
     "list": env("LIST_RATE", default="100/hour"),
     "detail": env("DETAIL_RATE", default="200/hour"),

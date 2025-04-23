@@ -26,6 +26,7 @@ class KeycapData:
     sound_profile: str
     image: Any
     price: int
+    description: str
 
 
 @clear_keycap_cache
@@ -52,6 +53,7 @@ def keycap_update(*, instance: Keycap, data: dict) -> Keycap:
         "sound_profile",
         "image",
         "price",
+        "description",
     ]
     keycap, _ = model_update(instance=instance, fields=fields, data=data)
     return keycap

@@ -28,6 +28,7 @@ class SwitchData:
     compatible_with: str
     image: Any
     price_per_switch: int
+    description: str
 
 
 @clear_switch_cache
@@ -56,6 +57,7 @@ def switch_update(*, instance: Switch, data: dict) -> Switch:
         "compatible_with",
         "image",
         "price_per_switch",
+        "description",
     ]
     switch, _ = model_update(instance=instance, fields=fields, data=data)
     return switch

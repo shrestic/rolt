@@ -38,6 +38,7 @@ class Keycap(BaseModel):
         validators=[validate_file_size],
     )
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField(blank=True, default="")
 
     class Meta:
         db_table = "keycap"

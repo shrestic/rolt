@@ -12,7 +12,7 @@ class Accessory(BaseModel):
     type = models.CharField(
         max_length=100,
     )
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True, default="")
     image = models.ImageField(
         upload_to="accessories/",
         blank=True,

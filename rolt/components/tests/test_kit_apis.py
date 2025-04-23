@@ -51,6 +51,7 @@ class TestKitApis:
             "weight": 1.2,
             "image": None,
             "price": 250,
+            "description": "",
         }
         response = api_client.post(
             "/components/kits/create/",
