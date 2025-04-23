@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 
 from rolt.common.models import BaseModel
+from rolt.core.validators import validate_file_size
 from rolt.manufacturers.models import Manufacturer
 
 
@@ -36,7 +37,12 @@ class Switch(BaseModel):
     lifespan = models.PositiveIntegerField()
     compatible_with = models.CharField(max_length=255)
 
-    image = models.ImageField(upload_to="switches/", blank=True, null=True)
+    image = models.ImageField(
+        upload_to="switches/",
+        blank=True,
+        null=True,
+        validators=[validate_file_size],
+    )
     price_per_switch = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:

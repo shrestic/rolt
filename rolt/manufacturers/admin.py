@@ -12,6 +12,7 @@ class ManufacturerAdmin(admin.ModelAdmin):
         "logo_preview",
     )
     search_fields = (
+        "name",
         "code",
         "label",
     )
