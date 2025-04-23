@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 
 from rolt.common.models import BaseModel
+from rolt.core.validators import validate_file_size
 from rolt.manufacturers.models import Manufacturer
 
 
@@ -36,7 +37,12 @@ class Kit(BaseModel):
     dimensions = models.CharField(max_length=100, blank=True)
     weight = models.FloatField(null=True, blank=True)
 
-    image = models.ImageField(upload_to="kits/", blank=True, null=True)
+    image = models.ImageField(
+        upload_to="kits/",
+        blank=True,
+        null=True,
+        validators=[validate_file_size],
+    )
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
@@ -46,4 +52,4 @@ class Kit(BaseModel):
         db_table = "kit"
 
     def __str__(self):
-        return f"{self.name} ({self.layout})"
+        return f"{self.name}"

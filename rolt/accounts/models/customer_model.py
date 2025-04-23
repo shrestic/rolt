@@ -6,6 +6,7 @@ from django.db import models
 
 from rolt.accounts.validators import UserValidator
 from rolt.common.models import BaseModel
+from rolt.core.validators import validate_file_size
 
 PHONE_LENGTH = 10
 
@@ -22,6 +23,7 @@ class Customer(BaseModel):
         upload_to="customer/images",
         blank=True,
         null=True,
+        validators=[validate_file_size],
     )
     user = models.OneToOneField(
         User,

@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from rolt.common.pagination import LimitOffsetPagination
+from rolt.common.pagination import get_paginated_response
 from rolt.common.utils import inline_serializer
 from rolt.components.models.kit_model import Kit
 from rolt.components.selectors.kit_selectors import kit_get
@@ -72,8 +73,13 @@ class KitListApi(APIView):
         filters_serializer = self.FilterSerializer(data=request.query_params)
         filters_serializer.is_valid(raise_exception=True)
         kits = kit_list(filters=filters_serializer.validated_data)
-        serializer = self.OutputSerializer(kits, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return get_paginated_response(
+            pagination_class=self.Pagination,
+            serializer_class=self.OutputSerializer,
+            queryset=kits,
+            request=request,
+            view=self,
+        )
 
 
 class KitDetailApi(APIView):

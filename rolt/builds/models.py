@@ -7,6 +7,7 @@ from rolt.common.models import BaseModel
 from rolt.components.models.keycap_model import Keycap
 from rolt.components.models.kit_model import Kit
 from rolt.components.models.switch_model import Switch
+from rolt.core.validators import validate_file_size
 
 
 class Build(BaseModel):
@@ -60,6 +61,12 @@ class Service(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    image = models.ImageField(
+        upload_to="accessories/",
+        blank=True,
+        null=True,
+        validators=[validate_file_size],
+    )
 
     class Meta:
         db_table = "service"
@@ -97,7 +104,12 @@ class Showcase(BaseModel):
     )
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to="build_showcases/", null=True, blank=True)
+    image = models.ImageField(
+        upload_to="build_showcases/",
+        null=True,
+        blank=True,
+        validators=[validate_file_size],
+    )
 
     class Meta:
         db_table = "showcase"

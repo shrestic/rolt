@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 
 from rolt.common.models import BaseModel
+from rolt.core.validators import validate_file_size
 
 
 class Accessory(BaseModel):
@@ -10,9 +11,14 @@ class Accessory(BaseModel):
     name = models.CharField(max_length=255)
     type = models.CharField(
         max_length=100,
-    )  # e.g., cable, wrist rest, artisan cap, etc.
+    )
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to="accessories/", blank=True, null=True)
+    image = models.ImageField(
+        upload_to="accessories/",
+        blank=True,
+        null=True,
+        validators=[validate_file_size],
+    )
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:

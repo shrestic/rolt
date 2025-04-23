@@ -12,7 +12,7 @@ class TestKitApis:
         baker.make(Kit, _quantity=3)
         response = api_client.get("/components/kits/")
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 3  # noqa: PLR2004
+        assert len(response.data["results"]) == 3  # noqa: PLR2004
 
     def test_if_anonymous_user_can_get_kit_detail_return_200(self, api_client):
         kit = baker.make(Kit)
@@ -167,8 +167,8 @@ class TestKitApis:
         baker.make(Kit, name="Beta")
         response = api_client.get("/components/kits/?name=Alpha")
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 1
-        assert response.data[0]["name"] == "Alpha"
+        assert len(response.data["results"]) == 1
+        assert response.data["results"][0]["name"] == "Alpha"
 
     def test_filter_kits_by_price_range_return_200(self, api_client):
         baker.make(Kit, price=100)
@@ -176,31 +176,31 @@ class TestKitApis:
         baker.make(Kit, price=300)
         response = api_client.get("/components/kits/?price_min=150&price_max=250")
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 1
-        assert response.data[0]["price"] == "200.00"
+        assert len(response.data["results"]) == 1
+        assert response.data["results"][0]["price"] == "200.00"
 
     def test_filter_kits_by_layout_and_connectivity_return_200(self, api_client):
         baker.make(Kit, layout="TKL", connectivity="Wired")
         baker.make(Kit, layout="60%", connectivity="Wireless")
         response = api_client.get("/components/kits/?layout=TKL&connectivity=Wired")
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 1
-        assert response.data[0]["layout"] == "TKL"
-        assert response.data[0]["connectivity"] == "Wired"
+        assert len(response.data["results"]) == 1
+        assert response.data["results"][0]["layout"] == "TKL"
+        assert response.data["results"][0]["connectivity"] == "Wired"
 
     def test_filter_kits_by_manufacturer_code_return_200(self, api_client):
         manufacturer = baker.make(Manufacturer, code="MANA")
         baker.make(Kit, manufacturer=manufacturer)
         response = api_client.get("/components/kits/?manufacturer_code=MANA")
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 1
-        assert response.data[0]["manufacturer"]["code"] == "MANA"
+        assert len(response.data["results"]) == 1
+        assert response.data["results"][0]["manufacturer"]["code"] == "MANA"
 
     def test_filter_kits_by_hot_swap_and_knob_return_200(self, api_client):
         baker.make(Kit, hot_swap=True, knob=True)
         baker.make(Kit, hot_swap=False, knob=False)
         response = api_client.get("/components/kits/?hot_swap=True&knob=True")
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data) == 1
-        assert response.data[0]["hot_swap"] is True
-        assert response.data[0]["knob"] is True
+        assert len(response.data["results"]) == 1
+        assert response.data["results"][0]["hot_swap"] is True
+        assert response.data["results"][0]["knob"] is True

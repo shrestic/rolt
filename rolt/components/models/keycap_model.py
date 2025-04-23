@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 
 from rolt.common.models import BaseModel
+from rolt.core.validators import validate_file_size
 from rolt.manufacturers.models import Manufacturer
 
 
@@ -30,7 +31,12 @@ class Keycap(BaseModel):
     texture = models.CharField(max_length=100)
     sound_profile = models.CharField(max_length=100)
 
-    image = models.ImageField(upload_to="keycaps/", blank=True, null=True)
+    image = models.ImageField(
+        upload_to="keycaps/",
+        blank=True,
+        null=True,
+        validators=[validate_file_size],
+    )
     price = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:

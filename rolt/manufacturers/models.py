@@ -1,12 +1,18 @@
 from django.db import models
 
 from rolt.common.models import BaseModel
+from rolt.core.validators import validate_file_size
 
 
 class Manufacturer(BaseModel):
     code = models.CharField(max_length=50, unique=True, db_index=True)
     label = models.CharField(max_length=255)
-    logo = models.ImageField(upload_to="manufacturers/", blank=True, null=True)
+    logo = models.ImageField(
+        upload_to="manufacturers/",
+        blank=True,
+        null=True,
+        validators=[validate_file_size],
+    )
 
     class Meta:
         ordering = ["code"]

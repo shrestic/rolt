@@ -25,6 +25,7 @@ class ServiceListApi(APIView):
                 "name",
                 "description",
                 "price",
+                "image",
             ]
 
     def get(self, request):
@@ -41,6 +42,7 @@ class ServiceCreateApi(APIView):
         name = serializers.CharField()
         description = serializers.CharField(required=False)
         price = serializers.DecimalField(max_digits=10, decimal_places=2)
+        image = serializers.ImageField(required=False, allow_null=True)
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
@@ -54,6 +56,7 @@ class ServiceCreateApi(APIView):
             name=data["name"],
             description=data.get("description", ""),
             price=data["price"],
+            image=data.get("image", None),
         )
         return Response(status=status.HTTP_201_CREATED)
 
