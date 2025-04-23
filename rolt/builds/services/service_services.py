@@ -2,6 +2,7 @@ from typing import Any
 
 from rolt.builds.cache import clear_service_list_cache
 from rolt.builds.models import Service
+from rolt.common.services import model_update
 
 
 @clear_service_list_cache
@@ -20,6 +21,18 @@ def service_create(
         price=price,
         image=image,
     )
+
+
+@clear_service_list_cache
+def service_update(*, instance: Service, data: dict) -> Service:
+    fields = [
+        "name",
+        "description",
+        "price",
+        "image",
+    ]
+    service, has_updated = model_update(instance=instance, fields=fields, data=data)
+    return service
 
 
 @clear_service_list_cache

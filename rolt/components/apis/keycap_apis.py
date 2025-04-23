@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 
 from rolt.common.pagination import LimitOffsetPagination
@@ -24,6 +27,12 @@ from rolt.manufacturers.services import manufacturer_get_dict_by_codes
 
 class KeycapListApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [
+        AnonRateThrottle,
+        UserRateThrottle,
+        ScopedRateThrottle,
+    ]
+    throttle_scope = "keycap_list"  # 100/hour from LIST_RATE
 
     class Pagination(LimitOffsetPagination):
         default_limit = 10
@@ -78,6 +87,8 @@ class KeycapListApi(APIView):
 
 class KeycapDetailApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = "keycap_detail"  # 200/hour from DETAIL_RATE
 
     class OutputSerializer(serializers.ModelSerializer):
         manufacturer = inline_serializer(
@@ -102,6 +113,8 @@ class KeycapDetailApi(APIView):
 
 class KeycapCreateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "keycap_create"  # 100/hour from CREATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         manufacturer_code = serializers.CharField()
@@ -130,6 +143,8 @@ class KeycapCreateApi(APIView):
 
 class KeycapUpdateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "keycap_update"  # 100/hour from UPDATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         manufacturer_code = serializers.CharField(required=False)
@@ -159,6 +174,8 @@ class KeycapUpdateApi(APIView):
 
 class KeycapDeleteApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "keycap_delete"  # 50/hour from DELETE_RATE
 
     def delete(self, request, code):
         keycap = keycap_get(code=code)
@@ -170,6 +187,8 @@ class KeycapDeleteApi(APIView):
 
 class KeycapBulkCreateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "keycap_bulk_create"  # 50/hour from BULK_CREATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         manufacturer_code = serializers.CharField()

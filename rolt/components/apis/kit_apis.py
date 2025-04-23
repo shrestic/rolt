@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 
 from rolt.common.pagination import LimitOffsetPagination
@@ -24,6 +27,12 @@ from rolt.manufacturers.services import manufacturer_get_dict_by_codes
 
 class KitListApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [
+        AnonRateThrottle,
+        UserRateThrottle,
+        ScopedRateThrottle,
+    ]
+    throttle_scope = "kit_list"  # 100/hour from LIST_RATE
 
     class Pagination(LimitOffsetPagination):
         default_limit = 10
@@ -84,6 +93,8 @@ class KitListApi(APIView):
 
 class KitDetailApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = "kit_detail"  # 200/hour from DETAIL_RATE
 
     class OutputSerializer(serializers.ModelSerializer):
         manufacturer = inline_serializer(
@@ -109,6 +120,8 @@ class KitDetailApi(APIView):
 
 class KitCreateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "kit_create"  # 100/hour from CREATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         manufacturer_code = serializers.CharField()
@@ -142,6 +155,8 @@ class KitCreateApi(APIView):
 
 class KitUpdateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "kit_update"  # 100/hour from UPDATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         manufacturer_code = serializers.IntegerField(required=False)
@@ -172,6 +187,8 @@ class KitUpdateApi(APIView):
 
 class KitDeleteApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "kit_delete"  # 50/hour from DELETE_RATE
 
     def delete(self, request, code):
         kit = kit_get(code=code)
@@ -184,6 +201,8 @@ class KitDeleteApi(APIView):
 
 class KitBulkCreateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "kit_bulk_create"  # 50/hour from BULK_CREATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         manufacturer_code = serializers.CharField()

@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 
 from rolt.core.exceptions import ApplicationError
@@ -17,6 +20,8 @@ from rolt.manufacturers.services import manufacturer_update
 
 class ManufacturerCreateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "manufacturer_create"  # 100/hour from CREATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -42,6 +47,8 @@ class ManufacturerCreateApi(APIView):
 
 class ManufacturerBulkCreateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "manufacturer_bulk_create"  # 50/hour from BULK_CREATE_RATE
 
     class ManufacturerSerializer(serializers.ModelSerializer):
         class Meta:
@@ -71,6 +78,8 @@ class ManufacturerBulkCreateApi(APIView):
 
 class ManufacturerListApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = "manufacturer_list"  # 100/hour from LIST_RATE
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -89,6 +98,8 @@ class ManufacturerListApi(APIView):
 
 class ManufacturerDetailApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = "manufacturer_detail"  # 200/hour from DETAIL_RATE
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -111,6 +122,8 @@ class ManufacturerDetailApi(APIView):
 
 class ManufacturerUpdateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "manufacturer_update"  # 100/hour from UPDATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -134,6 +147,8 @@ class ManufacturerUpdateApi(APIView):
 
 class ManufacturerDeleteApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "manufacturer_delete"  # 50/hour from DELETE_RATE
 
     def delete(self, request, code):
         manufacturer = manufacturer_get(code=code)
