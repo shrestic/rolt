@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from rolt.common.services import model_update
+from rolt.components.cache import clear_switch_cache
 from rolt.components.models.switch_model import Switch
 from rolt.manufacturers.models import Manufacturer
 
@@ -29,10 +30,12 @@ class SwitchData:
     price_per_switch: int
 
 
+@clear_switch_cache
 def switch_create(*, data: SwitchData) -> Switch:
     return Switch.objects.create(**data.__dict__)
 
 
+@clear_switch_cache
 def switch_update(*, instance: Switch, data: dict) -> Switch:
     fields = [
         "manufacturer",
@@ -58,9 +61,11 @@ def switch_update(*, instance: Switch, data: dict) -> Switch:
     return switch
 
 
+@clear_switch_cache
 def switch_bulk_create(*, switches: list[Switch]) -> list[Switch]:
     return Switch.objects.bulk_create(switches)
 
 
+@clear_switch_cache
 def switch_delete(*, instance: Switch) -> None:
     instance.delete()

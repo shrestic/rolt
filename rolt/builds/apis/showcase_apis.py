@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 
 from rolt.builds.models import Showcase
@@ -17,6 +20,8 @@ from rolt.core.permissions import IsProductManager
 
 class ShowcaseListApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = "showcase_list"  # 100/hour from LIST_RATE
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -54,6 +59,8 @@ class ShowcaseListApi(APIView):
 
 class ShowcaseAddApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "showcase_create"  # 100/hour from CREATE_RATE
 
     class InputSerializer(serializers.Serializer):
         class ShowcaseItemSerializer(serializers.Serializer):
@@ -100,6 +107,8 @@ class ShowcaseAddApi(APIView):
 
 class ShowcaseDeleteApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "showcase_delete"  # 50/hour from DELETE_RATE
 
     def delete(self, request, pk):
         showcase = showcase_get(id=pk)

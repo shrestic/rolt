@@ -1,4 +1,5 @@
 from rolt.accounts.models.customer_model import Customer
+from rolt.builds.cache import clear_preset_builds_cache
 from rolt.builds.models import Build
 from rolt.builds.models import SelectedService
 from rolt.builds.models import Service
@@ -26,6 +27,7 @@ def calculate_total_price(
     return base_price + addon_price
 
 
+@clear_preset_builds_cache
 def build_create(  # noqa: PLR0913
     *,
     name: str,
@@ -68,6 +70,7 @@ def build_create(  # noqa: PLR0913
     return build
 
 
+@clear_preset_builds_cache
 def build_update(  # noqa: PLR0913
     *,
     instance: Build,
@@ -123,5 +126,6 @@ def build_update(  # noqa: PLR0913
     return instance
 
 
+@clear_preset_builds_cache
 def build_delete(*, instance: Build) -> None:
     instance.delete()

@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 
 from rolt.accounts.selectors.customer_selector import CustomerSelector
@@ -68,6 +71,8 @@ class BuildOutputSerializer(serializers.ModelSerializer):
 
 class CustomerBuildListApi(APIView):
     permission_classes = [IsCustomer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "build_list"  # 100/hour from LIST_RATE
 
     def get(self, request):
         customer = CustomerSelector().customer_get(user_id=request.user.id)
@@ -80,6 +85,8 @@ class CustomerBuildListApi(APIView):
 
 class PresetBuildListApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = "build_list"  # 100/hour from LIST_RATE
 
     def get(self, request):
         builds = preset_builds_list()
@@ -89,6 +96,8 @@ class PresetBuildListApi(APIView):
 
 class CustomerBuildDetailApi(APIView):
     permission_classes = [IsCustomer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "build_detail"  # 200/hour from DETAIL_RATE
 
     def get(self, request, build_id):
         customer = CustomerSelector().customer_get(user_id=request.user.id)
@@ -104,6 +113,8 @@ class CustomerBuildDetailApi(APIView):
 
 class PresetBuildDetailApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = "build_detail"  # 200/hour from DETAIL_RATE
 
     def get(self, request, build_id):
         build = preset_build_get_by_id(id=build_id)
@@ -116,6 +127,8 @@ class PresetBuildDetailApi(APIView):
 
 class BuildCreateApi(APIView):
     permission_classes = [IsCustomerOrProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "build_create"  # 100/hour from CREATE_RATE
 
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField(required=False)
@@ -206,6 +219,8 @@ class BuildCreateApi(APIView):
 
 class BuildUpdateApi(APIView):
     permission_classes = [IsCustomerOrProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "build_update"  # 100/hour from UPDATE_RATE
 
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField(required=False)
@@ -288,6 +303,8 @@ class BuildUpdateApi(APIView):
 
 class BuildDeleteApi(APIView):
     permission_classes = [IsCustomerOrProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "build_delete"  # 50/hour from DELETE_RATE
 
     def delete(self, request, pk):
         build = build_get_by_id(id=pk)

@@ -66,6 +66,31 @@ class TestServiceApi:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Service.objects.filter(code="DELETE_ME").exists()
 
+    def test_product_manager_can_update_service(
+        self,
+        api_client,
+        make_employee_is_product_manager,
+    ):
+        user = make_employee_is_product_manager()
+        api_client.force_authenticate(user=user)
+
+        service = Service.objects.create(code="UPDATE_ME", name="Temp", price=1)
+
+        payload = {
+            "name": "Updated Name",
+            "price": "20.00",
+        }
+
+        response = api_client.patch(
+            f"/builds/services/{service.code}/update/",
+            data=payload,
+            format="json",
+        )
+        assert response.status_code == status.HTTP_200_OK
+        service.refresh_from_db()
+        assert service.name == "Updated Name"
+        assert service.price == 20.00  # noqa: PLR2004
+
     def test_delete_nonexistent_service_should_fail(
         self,
         api_client,

@@ -1,4 +1,9 @@
+import json
+from functools import wraps
+from hashlib import sha256
+
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import ImproperlyConfigured
 from django.http import Http404
 from django.shortcuts import get_object_or_404
@@ -70,3 +75,68 @@ def user_in_group(user, group_name: str) -> bool:
     if not user or not user.is_authenticated:
         return False
     return user.groups.filter(name=group_name).exists()
+
+
+def clear_cache(
+    *,
+    prefix: str | None = None,
+    filters: dict | None = None,
+    specific_key: str | None = None,
+) -> None:
+    """
+    Clear cache for keys matching a prefix, specific key, or generated from filters.
+
+    Args:
+        prefix: Cache key prefix (e.g., 'keycap_list:', 'kit_list:'). Clears all keys matching this prefix.
+        filters: Dictionary of filters to generate a hashed key (used for keycap_list, kit_list, switch_list).
+        specific_key: Exact cache key to clear (e.g., 'preset_builds_list').
+    """  # noqa: E501
+    try:
+        if specific_key:
+            # Delete a specific key (e.g., preset_builds_list)
+            cache.delete(specific_key)
+
+        if prefix and filters:
+            # Generate a cache key using the prefix and filters (for keycap_list, kit_list, switch_list)  # noqa: E501
+            filters_str = json.dumps(filters or {}, sort_keys=True)
+            cache_key = f"{prefix}{sha256(filters_str.encode()).hexdigest()}"
+            cache.delete(cache_key)
+
+        elif prefix:
+            # Delete all keys matching the prefix (e.g., keycap_list:*)
+            keys = cache.keys(f"{prefix}*")
+            if keys:
+                cache.delete_many(keys)
+
+    except AttributeError:
+        pass
+
+
+def invalidate_cache(prefix: str | None = None, specific_key: str | None = None):
+    """
+    Decorator to invalidate cache after a function execution.
+
+    Args:
+        prefix: Cache key prefix to clear (e.g., 'keycap_list:', 'kit_list:').
+        specific_key: Specific cache key to clear (e.g., 'preset_builds_list').
+
+    Usage:
+        @invalidate_cache(prefix="keycap_list:")
+        def update_keycap(...):
+            ...
+
+        @invalidate_cache(specific_key="preset_builds_list")
+        def update_preset_build(...):
+            ...
+    """
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            result = func(*args, **kwargs)
+            clear_cache(prefix=prefix, specific_key=specific_key)
+            return result
+
+        return wrapper
+
+    return decorator

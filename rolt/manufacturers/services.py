@@ -1,11 +1,15 @@
 from typing import Any
 
+from django.core.cache import cache
+
 from rolt.common.services import model_update
 from rolt.common.utils import get_object
+from rolt.common.utils import invalidate_cache
 from rolt.manufacturers.models import Manufacturer
 
 
 # =======manufacturer Service=======#
+@invalidate_cache(specific_key="manufacturer_list")
 def manufacturer_create(
     *,
     code: str,
@@ -19,6 +23,7 @@ def manufacturer_create(
     )
 
 
+@invalidate_cache(specific_key="manufacturer_list")
 def manufacturer_bulk_create(
     *,
     data: list[dict],
@@ -34,6 +39,7 @@ def manufacturer_bulk_create(
     return Manufacturer.objects.bulk_create(manufacturers)
 
 
+@invalidate_cache(specific_key="manufacturer_list")
 def manufacturer_update(*, instance: Manufacturer, data: dict) -> Manufacturer:
     fields = [
         "label",
@@ -47,6 +53,7 @@ def manufacturer_update(*, instance: Manufacturer, data: dict) -> Manufacturer:
     return manufacturer
 
 
+@invalidate_cache(specific_key="manufacturer_list")
 def manufacturer_delete(*, instance: Manufacturer) -> None:
     instance.delete()
 
@@ -57,7 +64,13 @@ def manufacturer_get(*, code: str) -> Manufacturer | None:
 
 
 def manufacturer_list() -> list[Manufacturer]:
-    return Manufacturer.objects.all()
+    cache_key = "manufacturer_list"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+    qs = Manufacturer.objects.all()
+    cache.set(cache_key, qs, timeout=1800)
+    return qs
 
 
 def manufacturer_get_dict_by_codes(codes: list[str]) -> dict[str, Manufacturer]:

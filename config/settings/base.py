@@ -300,8 +300,27 @@ CELERY_TASK_SEND_SENT_EVENT = True
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
 
 # django-rest-framework
-# -------------------------------------------------------------------------------
-# django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
+COMPONENTS = ["keycap", "switch", "kit", "build", "service", "showcase", "accessory"]
+ACTIONS = {
+    "list": env("LIST_RATE", default="100/hour"),
+    "detail": env("DETAIL_RATE", default="200/hour"),
+    "create": env("CREATE_RATE", default="100/hour"),
+    "update": env("UPDATE_RATE", default="100/hour"),
+    "delete": env("DELETE_RATE", default="50/hour"),
+    "bulk_create": env("BULK_CREATE_RATE", default="20/hour"),
+    "global_list": env("GLOBAL_LIST_RATE", default="1000/hour"),
+}
+
+# Create DEFAULT_THROTTLE_RATES dynamic
+throttle_rates = {
+    "anon": env("ANON_RATE", default="150/hour"),
+    "user": env("USER_RATE", default="500/hour"),
+}
+for component in COMPONENTS:
+    for action, rate in ACTIONS.items():
+        throttle_rates[f"{component}_{action}"] = rate
+
+
 REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "rolt.common.exception_handlers.custom_exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -311,6 +330,11 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": throttle_rates,
 }
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup

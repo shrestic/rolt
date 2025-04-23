@@ -1,5 +1,6 @@
 import uuid
 
+from django.core.cache import cache
 from django.db.models import QuerySet
 
 from rolt.accounts.models.customer_model import Customer
@@ -52,12 +53,19 @@ def customer_build_list(*, customer) -> QuerySet[Build]:
 
 # Returns all builds that are marked as presets.
 def preset_builds_list() -> QuerySet[Build]:
-    return (
+    cache_key = "preset_builds_list"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    qs = (
         Build.objects.select_related("kit", "switch", "keycap")
         .prefetch_related("selected_services__service")
         .filter(is_preset=True)
         .order_by("-created_at")
     )
+    cache.set(cache_key, qs, timeout=3600)
+    return qs
 
 
 def build_get_by_id(*, id: uuid.UUID) -> Build | None:  # noqa: A002

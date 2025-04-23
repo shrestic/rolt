@@ -3,6 +3,7 @@ import uuid
 import pytest
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.cache import cache
 from rest_framework.test import APIClient
 
 from rolt.accounts.models.customer_model import Customer
@@ -83,3 +84,8 @@ def make_employee_is_product_manager(db, authenticate):
         return user
 
     return create_employee
+
+
+@pytest.fixture(autouse=True)
+def clear_cache_before_tests():
+    cache.clear()

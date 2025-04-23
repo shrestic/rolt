@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 
 from rolt.common.pagination import LimitOffsetPagination
@@ -24,6 +27,12 @@ from rolt.manufacturers.services import manufacturer_get_dict_by_codes
 
 class SwitchListApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [
+        AnonRateThrottle,
+        UserRateThrottle,
+        ScopedRateThrottle,
+    ]
+    throttle_scope = "switch_list"  # 100/hour from LIST_RATE
 
     class Pagination(LimitOffsetPagination):
         default_limit = 10
@@ -76,6 +85,8 @@ class SwitchListApi(APIView):
 
 class SwitchDetailApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = "switch_detail"  # 200/hour from DETAIL_RATE
 
     class OutputSerializer(serializers.ModelSerializer):
         manufacturer = inline_serializer(
@@ -100,6 +111,8 @@ class SwitchDetailApi(APIView):
 
 class SwitchCreateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "switch_create"  # 100/hour from CREATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         manufacturer_code = serializers.CharField()
@@ -131,6 +144,8 @@ class SwitchCreateApi(APIView):
 
 class SwitchUpdateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "switch_update"  # 100/hour from UPDATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         manufacturer_code = serializers.CharField(required=False)
@@ -160,6 +175,8 @@ class SwitchUpdateApi(APIView):
 
 class SwitchDeleteApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "switch_delete"  # 50/hour from DELETE_RATE
 
     def delete(self, request, code):
         switch = switch_get(code=code)
@@ -171,6 +188,8 @@ class SwitchDeleteApi(APIView):
 
 class SwitchBulkCreateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "switch_bulk_create"  # 50/hour from BULK_CREATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         manufacturer_code = serializers.CharField()

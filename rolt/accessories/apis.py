@@ -2,6 +2,9 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
+from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.throttling import UserRateThrottle
 from rest_framework.views import APIView
 
 from rolt.accessories.models import Accessory
@@ -19,6 +22,8 @@ from rolt.core.permissions import IsProductManager
 
 class AccessoryListApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = "accessory_list"  # 100/hour from LIST_RATE
 
     class Pagination(LimitOffsetPagination):
         default_limit = 10
@@ -58,6 +63,8 @@ class AccessoryListApi(APIView):
 
 class AccessoryDetailApi(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle, ScopedRateThrottle]
+    throttle_scope = "accessory_detail"  # 200/hour from DETAIL_RATE
 
     class OutputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -75,6 +82,8 @@ class AccessoryDetailApi(APIView):
 
 class AccessoryCreateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "accessory_create"  # 100/hour from CREATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -91,6 +100,8 @@ class AccessoryCreateApi(APIView):
 
 class AccessoryUpdateApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "accessory_update"  # 100/hour from UPDATE_RATE
 
     class InputSerializer(serializers.ModelSerializer):
         class Meta:
@@ -115,6 +126,8 @@ class AccessoryUpdateApi(APIView):
 
 class AccessoryDeleteApi(APIView):
     permission_classes = [IsProductManager]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "accessory_delete"  # 50/hour from DELETE_RATE
 
     def delete(self, request, pk):
         accessory = accessory_get(id=pk)

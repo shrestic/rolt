@@ -10,6 +10,7 @@ from rolt.builds.apis.build_apis import PresetBuildListApi
 from rolt.builds.apis.services_apis import ServiceCreateApi
 from rolt.builds.apis.services_apis import ServiceDeleteApi
 from rolt.builds.apis.services_apis import ServiceListApi
+from rolt.builds.apis.services_apis import ServiceUpdateApi
 from rolt.builds.apis.showcase_apis import ShowcaseAddApi
 from rolt.builds.apis.showcase_apis import ShowcaseDeleteApi
 from rolt.builds.apis.showcase_apis import ShowcaseListApi
@@ -54,6 +55,11 @@ urlpatterns = [
     # -------------------------
     path("services/", ServiceListApi.as_view(), name="service-list"),
     path("services/create/", ServiceCreateApi.as_view(), name="service-create"),
+    path(
+        "services/<str:code>/update/",
+        ServiceUpdateApi.as_view(),
+        name="showcase-update",
+    ),
     path(
         "services/<str:code>/delete/",
         ServiceDeleteApi.as_view(),
