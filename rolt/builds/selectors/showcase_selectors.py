@@ -1,16 +1,23 @@
 import uuid
 
+from django.core.cache import cache
 from django.db.models import QuerySet
 
 from rolt.builds.models import Showcase
 
 
 def showcase_list() -> QuerySet[Showcase]:
-    return (
+    cache_key = "showcase_list"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+    qs = (
         Showcase.objects.select_related("build")
         .filter(build__is_preset=True)
         .order_by("-build__created_at")
     )
+    cache.set(cache_key, qs, timeout=1800)  # Cache for 30 minutes
+    return qs
 
 
 def showcase_get(

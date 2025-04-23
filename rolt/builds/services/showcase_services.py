@@ -1,7 +1,9 @@
+from rolt.builds.cache import clear_showcase_list_cache
 from rolt.builds.models import Build
 from rolt.builds.models import Showcase
 
 
+@clear_showcase_list_cache
 def showcase_create(
     *,
     build: Build,
@@ -17,5 +19,6 @@ def showcase_create(
     )
 
 
+@clear_showcase_list_cache
 def showcase_delete(*, showcase: Showcase) -> None:
     showcase.delete()

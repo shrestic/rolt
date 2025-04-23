@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from rolt.common.services import model_update
+from rolt.components.cache import clear_kit_cache
 from rolt.components.models.kit_model import Kit
 from rolt.manufacturers.models import Manufacturer
 
@@ -29,10 +30,12 @@ class KitData:
     price: int
 
 
+@clear_kit_cache
 def kit_create(*, data: KitData) -> Kit:
     return Kit.objects.create(**data.__dict__)
 
 
+@clear_kit_cache
 def kit_update(*, instance: Kit, data: dict) -> Kit:
     fields = [
         "name",
@@ -58,9 +61,11 @@ def kit_update(*, instance: Kit, data: dict) -> Kit:
     return kit
 
 
+@clear_kit_cache
 def kit_bulk_create(*, kits: list[Kit]) -> list[Kit]:
     return Kit.objects.bulk_create(kits)
 
 
+@clear_kit_cache
 def kit_delete(*, instance: Kit) -> None:
     instance.delete()

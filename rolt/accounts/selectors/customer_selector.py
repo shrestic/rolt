@@ -24,7 +24,7 @@ class CustomerSelector:
             return get_object(queryset, user_id=user_id)
         return None
 
-    def customer_list(self, filters=None) -> QuerySet[Customer]:
+    def customer_list(self, filters: dict | None = None) -> QuerySet[Customer]:
         filters = filters or {}
 
         qs = Customer.objects.select_related("user").all()
