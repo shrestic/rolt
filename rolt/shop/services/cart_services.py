@@ -18,7 +18,7 @@ def cart_item_create_update(customer: Customer, product: Model, quantity=1):
         defaults={"quantity": quantity},
     )
     if not created:
-        cart_item.quantity += quantity
+        cart_item.quantity = quantity
         cart_item.save()
     return cart_item
 
