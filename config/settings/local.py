@@ -96,3 +96,8 @@ DJOSER = {
 
 
 LOGIN_REDIRECT_URL = f"http://{DOMAIN}/about"
+VNPAY_RETURN_URL = env.str("VNPAY_RETURN_URL")
+VNPAY_PAYMENT_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+VNPAY_API_URL = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"
+VNPAY_TMN_CODE = env.str("VNPAY_TMN_CODE")
+VNPAY_HASH_SECRET_KEY = env.str("VNPAY_HASH_SECRET_KEY")
