@@ -1,1 +1,84 @@
-# Register your models here.
+from django.contrib import admin
+
+from rolt.shop.models.cart_model import CartItem
+from rolt.shop.models.order_model import Order
+from rolt.shop.models.order_model import OrderItem
+
+
+def is_product_manager(request):
+    return request.user.groups.filter(name="Product Manager").exists()
+
+
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ("id", "customer", "product_display", "quantity", "added_at")
+
+    def get_fields(self, request, obj=None):
+        return (
+            "customer",
+            "content_type",
+            "object_id",
+            "quantity",
+            "added_at",
+        )
+
+    @admin.display(
+        description="Product",
+    )
+    def product_display(self, obj):
+        return f"{obj.content_type.model.capitalize()} | {obj.product}"
+
+    def has_view_permission(self, request, obj=None):
+        return True
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    readonly_fields = ("product_display", "name_snapshot", "price_snapshot", "quantity")
+    fields = ("product_display", "name_snapshot", "price_snapshot", "quantity")
+    extra = 0
+
+    @admin.display(
+        description="Product",
+    )
+    def product_display(self, obj):
+        return str(obj.product)
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ("id", "customer", "status", "total_amount", "created_at")
+    list_filter = ("status",)
+    search_fields = ("id", "customer__user__email")
+    inlines = [OrderItemInline]
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.is_superuser:
+            return ()
+        return ("customer", "total_amount", "created_at", "updated_at")
+
+    def get_fields(self, request, obj=None):
+        return ("customer", "status", "total_amount", "created_at")
+
+    def has_view_permission(self, request, obj=None):
+        return True
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        if request.user.is_superuser:
+            return True
+        return is_product_manager(request)
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser

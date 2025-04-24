@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from rolt.accounts.selectors.customer_selector import CustomerSelector
@@ -39,6 +40,8 @@ class OutputSerializer(serializers.ModelSerializer):
 
 class CartItemCreateUpdateApi(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "cart_create"
 
     class InputSerializer(serializers.Serializer):
         product_type = serializers.CharField()
@@ -79,6 +82,8 @@ class CartItemCreateUpdateApi(APIView):
 
 class CartItemListApi(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "cart_list"
 
     def get(self, request):
         customer = CustomerSelector().customer_get(user_id=request.user.id)
@@ -98,6 +103,8 @@ class CartItemListApi(APIView):
 
 class CartItemDeleteApi(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "cart_delete"
 
     def delete(self, request, pk):
         customer = CustomerSelector().customer_get(user_id=request.user.id)
@@ -113,6 +120,8 @@ class CartItemDeleteApi(APIView):
 
 class CartClearApi(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "cart_delete"
 
     def post(self, request):
         customer = CustomerSelector().customer_get(user_id=request.user.id)
