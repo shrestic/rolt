@@ -2,10 +2,12 @@ from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from rolt.accounts.selectors.customer_selector import CustomerSelector
 from rolt.core.exceptions import ApplicationError
+from rolt.core.permissions import IsCustomer
 from rolt.shop.models.order_model import Order
 from rolt.shop.models.order_model import OrderItem
 from rolt.shop.selectors.cart_selectors import cart_item_list
@@ -50,7 +52,9 @@ class OrderOutputSerializer(serializers.ModelSerializer):
 
 
 class OrderCreateApi(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCustomer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "order_create"
 
     def post(self, request):
         customer = CustomerSelector().customer_get(user_id=request.user.id)
@@ -73,7 +77,9 @@ class OrderCreateApi(APIView):
 
 
 class OrderListApi(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCustomer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "order_list"
 
     def get(self, request):
         customer = CustomerSelector().customer_get(user_id=request.user.id)
@@ -87,7 +93,9 @@ class OrderListApi(APIView):
 
 
 class OrderDetailApi(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCustomer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "order_detail"
 
     def get(self, request, pk):
         customer = CustomerSelector().customer_get(user_id=request.user.id)
@@ -109,7 +117,9 @@ class OrderStatusUpdateSerializer(serializers.Serializer):
 
 
 class OrderStatusUpdateApi(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCustomer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "order_update"
 
     def patch(self, request, pk):
         serializer = OrderStatusUpdateSerializer(data=request.data)

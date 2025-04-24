@@ -311,6 +311,8 @@ COMPONENTS = [
     "accessory",
     "manufacturer",
     "shop",
+    "cart",
+    "order",
 ]
 ACTIONS = {
     "list": env("LIST_RATE", default="100/hour"),
