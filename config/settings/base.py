@@ -91,6 +91,7 @@ LOCAL_APPS = [
     "rolt.components",
     "rolt.builds",
     "rolt.accessories",
+    "rolt.shop",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -309,6 +310,7 @@ COMPONENTS = [
     "showcase",
     "accessory",
     "manufacturer",
+    "shop",
 ]
 ACTIONS = {
     "list": env("LIST_RATE", default="100/hour"),
