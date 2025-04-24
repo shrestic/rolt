@@ -7,27 +7,22 @@ from rest_framework.views import APIView
 from rolt.accounts.selectors.customer_selector import CustomerSelector
 from rolt.core.exceptions import ApplicationError
 from rolt.core.permissions import IsCustomer
-from rolt.shop.models.cart_model import Cart
+from rolt.shop.models.cart_model import CartItem
 from rolt.shop.selectors.cart_selectors import cart_exist
-from rolt.shop.selectors.cart_selectors import cart_get
+from rolt.shop.selectors.cart_selectors import cart_item_list
 from rolt.shop.services.cart_services import cart_clear
-from rolt.shop.services.cart_services import cart_create_update
-from rolt.shop.services.cart_services import cart_delete
+from rolt.shop.services.cart_services import cart_item_create_update
+from rolt.shop.services.cart_services import cart_item_delete
 from rolt.shop.services.cart_services import convert_to_product
+from rolt.shop.utils import get_product_price
 
 
 class OutputSerializer(serializers.ModelSerializer):
     product_data = serializers.SerializerMethodField()
 
     class Meta:
-        model = Cart
+        model = CartItem
         fields = ["id", "quantity", "added_at", "product_data"]
-
-    def _get_product_price(self, product):
-        for field in ["price", "price_per_switch", "total_price"]:
-            if hasattr(product, field):
-                return getattr(product, field)
-        return None
 
     def get_product_data(self, obj):
         product = obj.product
@@ -37,12 +32,12 @@ class OutputSerializer(serializers.ModelSerializer):
         return {
             "id": str(product.id),
             "name": getattr(product, "name", None),
-            "price": self._get_product_price(product),
+            "price": get_product_price(product),
             "type": product.__class__.__name__.lower(),
         }
 
 
-class CartCreateUpdateApi(APIView):
+class CartItemCreateUpdateApi(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
 
     class InputSerializer(serializers.Serializer):
@@ -68,21 +63,21 @@ class CartCreateUpdateApi(APIView):
                 product_id=product_id,
                 product_type=product_type,
             )
-            cart = cart_create_update(
+            cart_item = cart_item_create_update(
                 customer=customer,
                 product=product,
                 quantity=quantity,
             )
         except ValueError as e:
             raise ApplicationError(str(e)) from e
-        serializer = OutputSerializer(cart)
+        serializer = OutputSerializer(cart_item)
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED,
         )
 
 
-class CartDetailApi(APIView):
+class CartItemListApi(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
 
     def get(self, request):
@@ -93,14 +88,15 @@ class CartDetailApi(APIView):
         if not cart_exist(customer=customer):
             msg = "Cart does not exist."
             raise ApplicationError(msg)
-        cart = cart_get(customer=customer)
-        if not cart:
+        cart_items = cart_item_list(customer=customer)
+        if not cart_items:
             msg = "Cart is empty."
             raise ApplicationError(msg)
-        return Response(OutputSerializer(cart, many=True).data)
+        serializers = OutputSerializer(cart_items, many=True)
+        return Response(serializers.data, status=status.HTTP_200_OK)
 
 
-class CartDeleteApi(APIView):
+class CartItemDeleteApi(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
 
     def delete(self, request, pk):
@@ -108,7 +104,7 @@ class CartDeleteApi(APIView):
         if not customer:
             msg = "Customer not found."
             raise ApplicationError(msg)
-        deleted, _ = cart_delete(pk, customer)
+        deleted, _ = cart_item_delete(id=pk, customer=customer)
         if not deleted:
             msg = "Cart item not found."
             raise ApplicationError(msg)
@@ -123,7 +119,7 @@ class CartClearApi(APIView):
         if not customer:
             msg = "Customer not found."
             raise ApplicationError(msg)
-        cleared = cart_clear(customer)
+        cleared = cart_clear(customer=customer)
         if not cleared:
             msg = "Cart not found."
             raise ApplicationError(msg)

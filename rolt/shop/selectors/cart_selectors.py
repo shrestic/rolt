@@ -1,9 +1,9 @@
-from rolt.shop.models.cart_model import Cart
+from rolt.shop.models.cart_model import CartItem
 
 
-def cart_get(*, customer):
-    return Cart.objects.filter(customer=customer).select_related("content_type")
+def cart_item_list(*, customer):
+    return CartItem.objects.filter(customer=customer).select_related("content_type")
 
 
 def cart_exist(*, customer):
-    return Cart.objects.filter(customer=customer).exists()
+    return CartItem.objects.filter(customer=customer).exists()
