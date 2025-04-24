@@ -33,4 +33,4 @@ pyotp==2.9.0
 qrcode==8.1
 
 # AWS
-boto3==1.37.37
+boto3==1.38.2
