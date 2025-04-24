@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.throttling import ScopedRateThrottle
@@ -112,7 +113,8 @@ class KeycapDetailApi(APIView):
 
 
 class KeycapCreateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "keycap_create"  # 100/hour from CREATE_RATE
 
@@ -142,7 +144,8 @@ class KeycapCreateApi(APIView):
 
 
 class KeycapUpdateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "keycap_update"  # 100/hour from UPDATE_RATE
 
@@ -173,7 +176,8 @@ class KeycapUpdateApi(APIView):
 
 
 class KeycapDeleteApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "keycap_delete"  # 50/hour from DELETE_RATE
 
@@ -186,7 +190,8 @@ class KeycapDeleteApi(APIView):
 
 
 class KeycapBulkCreateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "keycap_bulk_create"  # 50/hour from BULK_CREATE_RATE
 

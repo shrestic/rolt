@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -42,7 +43,7 @@ class OutputSerializer(serializers.ModelSerializer):
 
 
 class CartCreateUpdateApi(APIView):
-    permission_classes = [IsCustomer]
+    permission_classes = [IsAuthenticated, IsCustomer]
 
     class InputSerializer(serializers.Serializer):
         product_type = serializers.CharField()
@@ -82,7 +83,7 @@ class CartCreateUpdateApi(APIView):
 
 
 class CartDetailApi(APIView):
-    permission_classes = [IsCustomer]
+    permission_classes = [IsAuthenticated, IsCustomer]
 
     def get(self, request):
         customer = CustomerSelector().customer_get(user_id=request.user.id)
@@ -100,7 +101,7 @@ class CartDetailApi(APIView):
 
 
 class CartDeleteApi(APIView):
-    permission_classes = [IsCustomer]
+    permission_classes = [IsAuthenticated, IsCustomer]
 
     def delete(self, request, pk):
         customer = CustomerSelector().customer_get(user_id=request.user.id)
@@ -115,7 +116,7 @@ class CartDeleteApi(APIView):
 
 
 class CartClearApi(APIView):
-    permission_classes = [IsCustomer]
+    permission_classes = [IsAuthenticated, IsCustomer]
 
     def post(self, request):
         customer = CustomerSelector().customer_get(user_id=request.user.id)

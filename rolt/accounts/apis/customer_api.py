@@ -10,12 +10,13 @@ from rolt.accounts.selectors.customer_selector import CustomerSelector
 from rolt.accounts.services.customer_service import CustomerService
 from rolt.common.pagination import get_paginated_response
 from rolt.core.exceptions import ApplicationError
+from rolt.core.permissions import IsCustomer
 from rolt.core.permissions import IsSupportStaff
 from rolt.users.serializers import UserSerializer
 
 
 class MeCustomerDetailApi(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCustomer]
 
     class OutputSerializer(serializers.ModelSerializer):
         user = UserSerializer()
@@ -34,7 +35,7 @@ class MeCustomerDetailApi(APIView):
 
 
 class MeCustomerUpdateApi(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCustomer]
 
     class InputSerializer(serializers.Serializer):
         phone = serializers.CharField(required=False)

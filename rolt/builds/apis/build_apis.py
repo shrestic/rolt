@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.throttling import ScopedRateThrottle
@@ -70,7 +71,7 @@ class BuildOutputSerializer(serializers.ModelSerializer):
 
 
 class CustomerBuildListApi(APIView):
-    permission_classes = [IsCustomer]
+    permission_classes = [IsAuthenticated, IsCustomer]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "build_list"  # 100/hour from LIST_RATE
 
@@ -95,7 +96,7 @@ class PresetBuildListApi(APIView):
 
 
 class CustomerBuildDetailApi(APIView):
-    permission_classes = [IsCustomer]
+    permission_classes = [IsAuthenticated, IsCustomer]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "build_detail"  # 200/hour from DETAIL_RATE
 
@@ -126,7 +127,7 @@ class PresetBuildDetailApi(APIView):
 
 
 class BuildCreateApi(APIView):
-    permission_classes = [IsCustomerOrProductManager]
+    permission_classes = [IsAuthenticated, IsCustomerOrProductManager]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "build_create"  # 100/hour from CREATE_RATE
 
@@ -218,7 +219,7 @@ class BuildCreateApi(APIView):
 
 
 class BuildUpdateApi(APIView):
-    permission_classes = [IsCustomerOrProductManager]
+    permission_classes = [IsAuthenticated, IsCustomerOrProductManager]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "build_update"  # 100/hour from UPDATE_RATE
 
@@ -302,7 +303,7 @@ class BuildUpdateApi(APIView):
 
 
 class BuildDeleteApi(APIView):
-    permission_classes = [IsCustomerOrProductManager]
+    permission_classes = [IsAuthenticated, IsCustomerOrProductManager]
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "build_delete"  # 50/hour from DELETE_RATE
 

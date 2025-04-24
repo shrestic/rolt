@@ -8,11 +8,12 @@ from rolt.accounts.models.employee_model import Employee
 from rolt.accounts.selectors.employee_selector import EmployeeSelector
 from rolt.accounts.services.employee_service import EmployeeService
 from rolt.core.exceptions import ApplicationError
+from rolt.core.permissions import IsSupportOrProductManager
 from rolt.users.serializers import UserSerializer
 
 
 class MeEmployeeDetailApi(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsSupportOrProductManager]
 
     class OutputSerializer(serializers.ModelSerializer):
         user = UserSerializer()
@@ -39,7 +40,7 @@ class MeEmployeeDetailApi(APIView):
 
 
 class MeEmployeeUpdateApi(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsSupportOrProductManager]
 
     class InputSerializer(serializers.Serializer):
         phone = serializers.CharField(required=False)

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.throttling import ScopedRateThrottle
@@ -58,7 +59,8 @@ class ShowcaseListApi(APIView):
 
 
 class ShowcaseAddApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "showcase_create"  # 100/hour from CREATE_RATE
 
@@ -106,7 +108,8 @@ class ShowcaseAddApi(APIView):
 
 
 class ShowcaseDeleteApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "showcase_delete"  # 50/hour from DELETE_RATE
 

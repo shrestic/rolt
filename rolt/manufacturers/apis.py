@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.throttling import ScopedRateThrottle
@@ -19,7 +20,8 @@ from rolt.manufacturers.services import manufacturer_update
 
 
 class ManufacturerCreateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "manufacturer_create"  # 100/hour from CREATE_RATE
 
@@ -46,7 +48,8 @@ class ManufacturerCreateApi(APIView):
 
 
 class ManufacturerBulkCreateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "manufacturer_bulk_create"  # 50/hour from BULK_CREATE_RATE
 
@@ -121,7 +124,8 @@ class ManufacturerDetailApi(APIView):
 
 
 class ManufacturerUpdateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "manufacturer_update"  # 100/hour from UPDATE_RATE
 
@@ -146,7 +150,8 @@ class ManufacturerUpdateApi(APIView):
 
 
 class ManufacturerDeleteApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "manufacturer_delete"  # 50/hour from DELETE_RATE
 

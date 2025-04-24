@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.throttling import ScopedRateThrottle
@@ -81,7 +82,8 @@ class AccessoryDetailApi(APIView):
 
 
 class AccessoryCreateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "accessory_create"  # 100/hour from CREATE_RATE
 
@@ -99,7 +101,8 @@ class AccessoryCreateApi(APIView):
 
 
 class AccessoryUpdateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "accessory_update"  # 100/hour from UPDATE_RATE
 
@@ -125,7 +128,8 @@ class AccessoryUpdateApi(APIView):
 
 
 class AccessoryDeleteApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "accessory_delete"  # 50/hour from DELETE_RATE
 

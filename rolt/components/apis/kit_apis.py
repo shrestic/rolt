@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.throttling import ScopedRateThrottle
@@ -119,7 +120,8 @@ class KitDetailApi(APIView):
 
 
 class KitCreateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "kit_create"  # 100/hour from CREATE_RATE
 
@@ -154,7 +156,8 @@ class KitCreateApi(APIView):
 
 
 class KitUpdateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "kit_update"  # 100/hour from UPDATE_RATE
 
@@ -186,7 +189,8 @@ class KitUpdateApi(APIView):
 
 
 class KitDeleteApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "kit_delete"  # 50/hour from DELETE_RATE
 
@@ -200,7 +204,8 @@ class KitDeleteApi(APIView):
 
 
 class KitBulkCreateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "kit_bulk_create"  # 50/hour from BULK_CREATE_RATE
 

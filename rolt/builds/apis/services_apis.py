@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.throttling import ScopedRateThrottle
@@ -41,7 +42,8 @@ class ServiceListApi(APIView):
 
 
 class ServiceCreateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "service_create"  # 100/hour from CREATE_RATE
 
@@ -70,7 +72,8 @@ class ServiceCreateApi(APIView):
 
 
 class ServiceUpdateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "service_update"  # 100/hour from UPDATE_RATE
 
@@ -99,7 +102,8 @@ class ServiceUpdateApi(APIView):
 
 
 class ServiceDeleteApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "service_delete"  # 50/hour from DELETE_RATE
 

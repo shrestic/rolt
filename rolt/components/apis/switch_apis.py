@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 from rest_framework.throttling import ScopedRateThrottle
@@ -110,7 +111,8 @@ class SwitchDetailApi(APIView):
 
 
 class SwitchCreateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "switch_create"  # 100/hour from CREATE_RATE
 
@@ -143,7 +145,8 @@ class SwitchCreateApi(APIView):
 
 
 class SwitchUpdateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "switch_update"  # 100/hour from UPDATE_RATE
 
@@ -174,7 +177,8 @@ class SwitchUpdateApi(APIView):
 
 
 class SwitchDeleteApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "switch_delete"  # 50/hour from DELETE_RATE
 
@@ -187,7 +191,8 @@ class SwitchDeleteApi(APIView):
 
 
 class SwitchBulkCreateApi(APIView):
-    permission_classes = [IsProductManager]
+    permission_classes = [IsAuthenticated, IsProductManager]
+
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "switch_bulk_create"  # 50/hour from BULK_CREATE_RATE
 

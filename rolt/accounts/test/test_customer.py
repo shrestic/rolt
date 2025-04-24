@@ -30,10 +30,16 @@ class TestCustomer:
 
     def test_if_customer_can_get_own_profile_return_200(
         self,
-        authenticate,
+        make_customer,
         api_client,
     ):
-        authenticate()
+        # Arrange: Set up the test data
+        # Just get permission from the fixture
+        # to create call the call api and it irrelevant
+        # to the mock_user and mock_customer
+        customer = make_customer()
+        user = customer.user
+        api_client.force_authenticate(user=user)
 
         # Create a mock user
         mock_user = make_mock_object(
@@ -63,11 +69,16 @@ class TestCustomer:
 
     def test_if_customer_can_edit_own_profile_return_200(
         self,
-        authenticate,
+        make_customer,
         api_client,
     ):
-        # Arrange: Set up the test data and mocks
-        authenticate()  # Authenticate the user to make API calls
+        # Arrange: Set up the test data
+        # Just get permission from the fixture
+        # to create call the call api and it irrelevant
+        # to the mock_user and mock_customer
+        customer = make_customer()
+        user = customer.user
+        api_client.force_authenticate(user=user)
 
         mock_user = make_mock_object(
             id="123e4567-e89b-12d3-a456-426614174000",
