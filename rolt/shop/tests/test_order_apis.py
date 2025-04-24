@@ -13,7 +13,11 @@ OrderStatus = Order.StatusChoices
 
 @pytest.mark.django_db
 class TestOrderApi:
-    def test_customer_can_create_order_from_cart(self, api_client, make_customer):
+    def test_if_customer_can_create_order_from_cart_return_201_and_order_item_created(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -32,7 +36,11 @@ class TestOrderApi:
         assert Order.objects.filter(customer=customer).exists()
         assert OrderItem.objects.filter(order__customer=customer).count() == 1
 
-    def test_customer_can_view_order_list(self, api_client, make_customer):
+    def test_if_customer_can_view_order_list_return_200_and_list_with_1_item(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -45,7 +53,11 @@ class TestOrderApi:
         assert isinstance(response.data, list)
         assert len(response.data) == 1
 
-    def test_customer_can_view_order_detail(self, api_client, make_customer):
+    def test_if_customer_can_view_order_detail_return_200_and_items_included(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -58,7 +70,11 @@ class TestOrderApi:
         assert response.data["id"] == str(order.id)
         assert len(response.data["items"]) == 1
 
-    def test_customer_can_update_order_status(self, api_client, make_customer):
+    def test_if_customer_can_update_order_status_return_200_and_status_changed(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)

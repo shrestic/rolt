@@ -12,7 +12,10 @@ from rolt.manufacturers.models import Manufacturer
 
 @pytest.mark.django_db
 class TestShowcaseApi:
-    def test_if_anonymous_user_can_get_showcase_list(self, api_client):
+    def test_if_anonymous_user_can_get_showcase_list_return_200_and_show_data(
+        self,
+        api_client,
+    ):
         manufacturer = baker.make(Manufacturer)
         kit = baker.make(Kit, manufacturer=manufacturer)
         switch = baker.make(Switch, manufacturer=manufacturer)
@@ -26,7 +29,7 @@ class TestShowcaseApi:
         assert response.data[0]["id"] == str(build.id)
         assert response.data[0]["title"] == "Featured Build"
 
-    def test_if_product_manager_can_add_multiple_showcases(
+    def test_if_product_manager_can_add_multiple_showcases_return_201_and_all_added(
         self,
         api_client,
         make_employee_is_product_manager,
@@ -62,7 +65,7 @@ class TestShowcaseApi:
         assert str(builds[1].id) in response.data["added"]
         assert Showcase.objects.filter(build__in=builds).count() == 2  # noqa: PLR2004
 
-    def test_if_duplicate_showcases_are_skipped(
+    def test_if_duplicate_showcases_are_skipped_return_201_and_skipped_listed(
         self,
         api_client,
         make_employee_is_product_manager,
@@ -92,7 +95,7 @@ class TestShowcaseApi:
         assert response.status_code == status.HTTP_201_CREATED
         assert str(build.id) in response.data["skipped"]
 
-    def test_if_product_manager_can_delete_showcase(
+    def test_if_product_manager_can_delete_showcase_return_204_and_deleted(
         self,
         api_client,
         make_employee_is_product_manager,

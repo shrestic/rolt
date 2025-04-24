@@ -13,7 +13,11 @@ from rolt.manufacturers.models import Manufacturer
 
 @pytest.mark.django_db
 class TestBuildApi:
-    def test_customer_can_list_own_builds(self, api_client, make_customer):
+    def test_if_customer_can_list_own_builds_return_200_and_2_items(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -36,7 +40,7 @@ class TestBuildApi:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 2  # noqa: PLR2004
 
-    def test_anyone_can_list_presets(self, api_client):
+    def test_if_anyone_can_list_presets_return_200_and_2_items(self, api_client):
         manufacturer = baker.make(Manufacturer)
         kit = baker.make(Kit, manufacturer=manufacturer)
         switch = baker.make(Switch, manufacturer=manufacturer)
@@ -56,7 +60,11 @@ class TestBuildApi:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data) == 2  # noqa: PLR2004
 
-    def test_customer_can_get_own_build_detail(self, api_client, make_customer):
+    def test_if_customer_can_get_own_build_detail_return_200_and_correct_id(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -78,7 +86,10 @@ class TestBuildApi:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["id"] == str(build.id)
 
-    def test_anyone_can_get_preset_build_detail(self, api_client):
+    def test_if_anyone_can_get_preset_build_detail_return_200_and_correct_id(
+        self,
+        api_client,
+    ):
         manufacturer = baker.make(Manufacturer)
         kit = baker.make(Kit, manufacturer=manufacturer)
         switch = baker.make(Switch, manufacturer=manufacturer)
@@ -97,7 +108,11 @@ class TestBuildApi:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["id"] == str(build.id)
 
-    def test_customer_can_create_build_with_services(self, api_client, make_customer):
+    def test_if_customer_can_create_build_with_services_return_201_and_services_saved(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -128,7 +143,7 @@ class TestBuildApi:
         assert selected.filter(service=service1).exists()
         assert selected.filter(service=service2).exists()
 
-    def test_customer_can_see_selected_services_in_detail(
+    def test_if_customer_can_see_selected_services_in_detail_return_200_and_services_visible(  # noqa: E501
         self,
         api_client,
         make_customer,
@@ -157,7 +172,11 @@ class TestBuildApi:
         assert len(response.data["selected_services"]) == 1
         assert response.data["selected_services"][0]["service"]["code"] == service.code
 
-    def test_customer_can_update_own_build(self, api_client, make_customer):
+    def test_if_customer_can_update_own_build_return_200_and_kit_changed(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -193,7 +212,11 @@ class TestBuildApi:
         build.refresh_from_db()
         assert build.kit.code == "KIT2"
 
-    def test_customer_can_delete_own_build(self, api_client, make_customer):
+    def test_if_customer_can_delete_own_build_return_204_and_build_deleted(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)

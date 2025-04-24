@@ -59,77 +59,107 @@ class TestKeycapApis:
         assert response.status_code == status.HTTP_201_CREATED
         assert Keycap.objects.filter(code="GMK_LAZER").exists()
 
-    def test_filter_keycaps_by_material(self, api_client):
+    def test_if_filter_keycaps_by_material_return_200_and_filtered_result(
+        self,
+        api_client,
+    ):
         baker.make(Keycap, material="PBT")
         baker.make(Keycap, material="ABS")
         response = api_client.get("/components/keycaps/?material=PBT")
         assert response.status_code == status.HTTP_200_OK
         assert all(k["material"] == "PBT" for k in response.data["results"])
 
-    def test_filter_keycaps_by_profile(self, api_client):
+    def test_if_filter_keycaps_by_profile_return_200_and_filtered_result(
+        self,
+        api_client,
+    ):
         baker.make(Keycap, profile="OEM")
         baker.make(Keycap, profile="SA")
         response = api_client.get("/components/keycaps/?profile=OEM")
         assert response.status_code == status.HTTP_200_OK
         assert all(k["profile"] == "OEM" for k in response.data["results"])
 
-    def test_filter_keycaps_by_legend_type(self, api_client):
+    def test_if_filter_keycaps_by_legend_type_return_200_and_partial_match(
+        self,
+        api_client,
+    ):
         baker.make(Keycap, legend_type="Laser Engraved")
         baker.make(Keycap, legend_type="Double-shot")
         response = api_client.get("/components/keycaps/?legend_type=Laser")
         assert response.status_code == status.HTTP_200_OK
         assert "Laser" in response.data["results"][0]["legend_type"]
 
-    def test_filter_keycaps_by_compatibility(self, api_client):
+    def test_if_filter_keycaps_by_compatibility_return_200_and_exact_match(
+        self,
+        api_client,
+    ):
         baker.make(Keycap, compatibility="ANSI")
         baker.make(Keycap, compatibility="ISO")
         response = api_client.get("/components/keycaps/?compatibility=ISO")
         assert response.status_code == status.HTTP_200_OK
         assert response.data["results"][0]["compatibility"] == "ISO"
 
-    def test_filter_keycaps_by_texture(self, api_client):
+    def test_if_filter_keycaps_by_texture_return_200_and_exact_match(self, api_client):
         baker.make(Keycap, texture="Matte")
         baker.make(Keycap, texture="Glossy")
         response = api_client.get("/components/keycaps/?texture=Matte")
         assert response.status_code == status.HTTP_200_OK
         assert response.data["results"][0]["texture"] == "Matte"
 
-    def test_filter_keycaps_by_sound_profile(self, api_client):
+    def test_if_filter_keycaps_by_sound_profile_return_200_and_exact_match(
+        self,
+        api_client,
+    ):
         baker.make(Keycap, sound_profile="Thocky")
         baker.make(Keycap, sound_profile="Clacky")
         response = api_client.get("/components/keycaps/?sound_profile=Thocky")
         assert response.status_code == status.HTTP_200_OK
         assert response.data["results"][0]["sound_profile"] == "Thocky"
 
-    def test_filter_keycaps_by_shine_through(self, api_client):
+    def test_if_filter_keycaps_by_shine_through_return_200_and_true_value(
+        self,
+        api_client,
+    ):
         baker.make(Keycap, shine_through=True)
         baker.make(Keycap, shine_through=False)
         response = api_client.get("/components/keycaps/?shine_through=true")
         assert response.status_code == status.HTTP_200_OK
         assert response.data["results"][0]["shine_through"] is True
 
-    def test_filter_keycaps_by_layout_support(self, api_client):
+    def test_if_filter_keycaps_by_layout_support_return_200_and_partial_match(
+        self,
+        api_client,
+    ):
         baker.make(Keycap, layout_support="TKL")
         baker.make(Keycap, layout_support="Full-size")
         response = api_client.get("/components/keycaps/?layout_support=TKL")
         assert response.status_code == status.HTTP_200_OK
         assert "TKL" in response.data["results"][0]["layout_support"]
 
-    def test_filter_keycaps_by_theme_name(self, api_client):
+    def test_if_filter_keycaps_by_theme_name_return_200_and_exact_match(
+        self,
+        api_client,
+    ):
         baker.make(Keycap, theme_name="Cyberpunk")
         baker.make(Keycap, theme_name="Retro")
         response = api_client.get("/components/keycaps/?theme_name=Cyberpunk")
         assert response.status_code == status.HTTP_200_OK
         assert response.data["results"][0]["theme_name"] == "Cyberpunk"
 
-    def test_filter_keycaps_by_manufacturer_code(self, api_client):
+    def test_if_filter_keycaps_by_manufacturer_code_return_200_and_exact_match(
+        self,
+        api_client,
+    ):
         manufacturer = baker.make(Manufacturer, code="EPBT")
         baker.make(Keycap, manufacturer=manufacturer)
         response = api_client.get("/components/keycaps/?manufacturer_code=EPBT")
         assert response.status_code == status.HTTP_200_OK
         assert response.data["results"][0]["manufacturer"]["code"] == "EPBT"
 
-    def test_filter_keycaps_by_price_range(self, api_client):
+    def test_if_filter_keycaps_by_price_range_return_200_and_filtered_range(
+        self,
+        api_client,
+    ):
         baker.make(Keycap, price=90)
         baker.make(Keycap, price=150)
         baker.make(Keycap, price=200)

@@ -7,7 +7,10 @@ from rolt.accessories.models import Accessory
 
 @pytest.mark.django_db
 class TestAccessoryApi:
-    def test_if_anonymous_user_can_list_accessories(self, api_client):
+    def test_if_anonymous_user_can_list_accessories_return_200_and_count_3(
+        self,
+        api_client,
+    ):
         baker.make(Accessory, _quantity=3)
 
         response = api_client.get("/accessories/")
@@ -15,7 +18,10 @@ class TestAccessoryApi:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["count"] == 3  # noqa: PLR2004
 
-    def test_if_anonymous_user_can_retrieve_detail(self, api_client):
+    def test_if_anonymous_user_can_retrieve_detail_return_200_and_correct_id(
+        self,
+        api_client,
+    ):
         accessory = baker.make(Accessory)
 
         response = api_client.get(f"/accessories/{accessory.id}/")
@@ -23,7 +29,7 @@ class TestAccessoryApi:
         assert response.status_code == status.HTTP_200_OK
         assert response.data["id"] == str(accessory.id)
 
-    def test_if_product_manager_can_create_accessory(
+    def test_if_product_manager_can_create_accessory_return_201_and_created(
         self,
         api_client,
         make_employee_is_product_manager,
@@ -44,7 +50,7 @@ class TestAccessoryApi:
         assert response.status_code == status.HTTP_201_CREATED
         assert Accessory.objects.filter(id=response.data["id"]).exists()
 
-    def test_if_product_manager_can_update_accessory(
+    def test_if_product_manager_can_update_accessory_return_200_and_updated_name(
         self,
         api_client,
         make_employee_is_product_manager,
@@ -63,7 +69,7 @@ class TestAccessoryApi:
         accessory.refresh_from_db()
         assert accessory.name == "New Name"
 
-    def test_if_product_manager_can_delete_accessory(
+    def test_if_product_manager_can_delete_accessory_return_204_and_deleted(
         self,
         api_client,
         make_employee_is_product_manager,

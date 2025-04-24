@@ -8,7 +8,11 @@ from rolt.shop.models.cart_model import CartItem
 
 @pytest.mark.django_db
 class TestCartApi:
-    def test_if_customer_can_create_cart_item(self, api_client, make_customer):
+    def test_if_customer_can_create_cart_item_return_201_and_item_created(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -29,7 +33,11 @@ class TestCartApi:
         assert response.status_code == status.HTTP_201_CREATED
         assert CartItem.objects.filter(customer=customer).exists()
 
-    def test_customer_can_view_cart_items(self, api_client, make_customer):
+    def test_if_customer_can_view_cart_items_return_200_and_list(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -41,7 +49,11 @@ class TestCartApi:
         assert response.status_code == status.HTTP_200_OK
         assert isinstance(response.data, list)
 
-    def test_customer_can_clear_cart(self, api_client, make_customer):
+    def test_if_customer_can_clear_cart_return_204_and_cart_empty(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)
@@ -53,7 +65,11 @@ class TestCartApi:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not CartItem.objects.filter(customer=customer).exists()
 
-    def test_customer_can_delete_cart_item(self, api_client, make_customer):
+    def test_if_customer_can_delete_cart_item_return_204_and_deleted(
+        self,
+        api_client,
+        make_customer,
+    ):
         customer = make_customer()
         user = customer.user
         api_client.force_authenticate(user=user)

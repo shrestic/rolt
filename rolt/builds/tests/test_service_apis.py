@@ -6,7 +6,7 @@ from rolt.builds.models import Service
 
 @pytest.mark.django_db
 class TestServiceApi:
-    def test_product_manager_can_create_service(
+    def test_if_product_manager_can_create_service_return_201_and_service_created(
         self,
         api_client,
         make_employee_is_product_manager,
@@ -29,7 +29,7 @@ class TestServiceApi:
         assert response.status_code == status.HTTP_201_CREATED
         assert Service.objects.filter(code="LUBE_SERVICE").exists()
 
-    def test_cannot_create_duplicate_service_code(
+    def test_if_product_manager_create_duplicate_service_code_return_400(
         self,
         api_client,
         make_employee_is_product_manager,
@@ -52,7 +52,7 @@ class TestServiceApi:
         )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-    def test_product_manager_can_delete_service(
+    def test_if_product_manager_can_delete_service_return_204_and_deleted(
         self,
         api_client,
         make_employee_is_product_manager,
@@ -66,7 +66,7 @@ class TestServiceApi:
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Service.objects.filter(code="DELETE_ME").exists()
 
-    def test_product_manager_can_update_service(
+    def test_if_product_manager_can_update_service_return_200_and_updated(
         self,
         api_client,
         make_employee_is_product_manager,
@@ -91,7 +91,7 @@ class TestServiceApi:
         assert service.name == "Updated Name"
         assert service.price == 20.00  # noqa: PLR2004
 
-    def test_delete_nonexistent_service_should_fail(
+    def test_if_delete_nonexistent_service_return_400(
         self,
         api_client,
         make_employee_is_product_manager,

@@ -93,13 +93,13 @@ class TestSwitchApis:
         response = api_client.get("/components/switches/?manufacturer_code=GAT")
         assert response.status_code == status.HTTP_200_OK
 
-        def test_if_anonymous_user_gets_empty_list_when_no_switches_exist(
-            self,
-            api_client,
-        ):
-            response = api_client.get("/components/switches/")
-            assert response.status_code == status.HTTP_200_OK
-            assert len(response.data["results"]) == 0
+    def test_if_anonymous_user_gets_empty_list_when_no_switches_exist(
+        self,
+        api_client,
+    ):
+        response = api_client.get("/components/switches/")
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 0
 
     def test_if_get_switch_detail_returns_404_for_nonexistent_switch(
         self,
