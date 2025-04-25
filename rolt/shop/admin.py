@@ -3,6 +3,7 @@ from django.contrib import admin
 from rolt.shop.models.cart_model import CartItem
 from rolt.shop.models.order_model import Order
 from rolt.shop.models.order_model import OrderItem
+from rolt.shop.models.payment_transaction_model import PaymentTransaction
 
 
 def is_product_manager(request):
@@ -82,3 +83,43 @@ class OrderAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
+
+
+@admin.register(PaymentTransaction)
+class PaymentTransactionAdmin(admin.ModelAdmin):
+    list_display = (
+        "txn_ref",
+        "order",
+        "method",
+        "status",
+        "amount",
+        "paid_at",
+        "created_at",
+    )
+    list_filter = ("status", "method", "bank_code")
+    search_fields = ("txn_ref", "order__id", "transaction_no", "bank_code")
+    readonly_fields = (
+        "txn_ref",
+        "order",
+        "method",
+        "status",
+        "amount",
+        "bank_code",
+        "transaction_no",
+        "message",
+        "paid_at",
+        "created_at",
+        "updated_at",
+    )
+
+    def has_add_permission(self, request):
+        return request.user.is_superuser
+
+    def has_delete_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_change_permission(self, request, obj=None):
+        return request.user.is_superuser
+
+    def has_view_permission(self, request, obj=None):
+        return True

@@ -65,19 +65,11 @@ class PaymentTransaction(BaseModel):
     )
 
     # Transaction number provided by VNPAY
-    vnpay_transaction_no = models.CharField(
+    transaction_no = models.CharField(
         max_length=100,
         blank=True,
         default="",
         help_text="Transaction number from VNPAY (vnp_TransactionNo)",
-    )
-
-    # Response code from VNPAY
-    response_code = models.CharField(
-        max_length=10,
-        blank=True,
-        default="",
-        help_text="Response code from VNPAY (vnp_ResponseCode)",
     )
 
     # Additional message or notes about the payment
