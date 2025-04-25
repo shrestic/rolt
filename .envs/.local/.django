@@ -12,3 +12,11 @@ REDIS_URL=redis://redis:6379/0
 # Flower
 CELERY_FLOWER_USER=debug
 CELERY_FLOWER_PASSWORD=debug
+
+#Payment
+VNPAY_TMN_CODE=7ZRJTRMX
+VNPAY_HASH_SECRET_KEY=0T7RRHVLRR9Z4BQSACJVT3MNAGAJY1EF
+# Used by the frontend to show payment status; not for backend database updates
+# But for now , we are using the same URL for both
+VNPAY_RETURN_URL=https://9093-118-68-202-128.ngrok-free.app/shop/payment/return/
+TEMP_DOMAIN=9093-118-68-202-128.ngrok-free.app

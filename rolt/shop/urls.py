@@ -9,6 +9,9 @@ from rolt.shop.apis.order_apis import OrderCreateApi
 from rolt.shop.apis.order_apis import OrderDetailApi
 from rolt.shop.apis.order_apis import OrderListApi
 from rolt.shop.apis.order_apis import OrderStatusUpdateApi
+from rolt.shop.apis.payment_apis import PaymentCreateApi
+from rolt.shop.apis.payment_apis import PaymentIPNApi
+from rolt.shop.apis.payment_apis import PaymentReturnApi
 
 cart_patterns = [
     path("", CartItemListApi.as_view(), name="cart-detail"),
@@ -37,7 +40,16 @@ order_patterns = [
     ),
 ]
 
+payment_patterns = [
+    path("return/", PaymentReturnApi.as_view(), name="payment-return"),
+    path("ipn", PaymentIPNApi.as_view(), name="payment-ipn"),
+    path("<uuid:pk>/create/", PaymentCreateApi.as_view(), name="payment-create"),
+]
+
+urlpatterns = []
+
 urlpatterns = [
     path("cart/", include(cart_patterns)),
     path("order/", include(order_patterns)),
+    path("payment/", include(payment_patterns)),
 ]

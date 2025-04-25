@@ -1,13 +1,19 @@
 {
     "cSpell.words": [
+        "billpayment",
+        "digestmod",
+        "DJOSER",
         "GATERON",
         "Keycap",
         "keycaps",
-        "rolt"
+        "paydate",
+        "rolt",
+        "TMNCODE",
+        "vnpay"
     ],
     "python.testing.pytestArgs": [
         "."
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true,
+    "python.testing.pytestEnabled": true
 }
