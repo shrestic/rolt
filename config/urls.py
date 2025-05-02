@@ -25,6 +25,7 @@ urlpatterns = [
     path("builds/", include("rolt.builds.urls")),
     path("accessories/", include("rolt.accessories.urls")),
     path("shop/", include("rolt.shop.urls")),
+    path("chat/", include("rolt.chat.urls")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]

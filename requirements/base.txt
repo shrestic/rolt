@@ -10,7 +10,8 @@ flower==2.0.1  # https://github.com/mher/flower
 uvicorn[standard]==0.34.2  # https://github.com/encode/uvicorn
 uvicorn-worker==0.3.0  # https://github.com/Kludex/uvicorn-worker
 sqlalchemy==2.0.40
-
+channels==4.2.2
+channels-redis==4.2.1
 # Django
 # ------------------------------------------------------------------------------
 django==5.1.8  # pyup: < 5.1  # https://www.djangoproject.com/

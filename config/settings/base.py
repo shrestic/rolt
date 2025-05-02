@@ -78,6 +78,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "drf_spectacular",
+    "channels",
 ]
 
 LOCAL_APPS = [
@@ -92,6 +93,7 @@ LOCAL_APPS = [
     "rolt.builds",
     "rolt.accessories",
     "rolt.shop",
+    "rolt.chat",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -313,6 +315,7 @@ COMPONENTS = [
     "cart",
     "order",
     "payment",
+    "chat",
 ]
 ACTIONS = {
     "list": env("LIST_RATE", default="100/hour"),
@@ -321,6 +324,7 @@ ACTIONS = {
     "update": env("UPDATE_RATE", default="100/hour"),
     "delete": env("DELETE_RATE", default="50/hour"),
     "bulk_create": env("BULK_CREATE_RATE", default="20/hour"),
+    "room_create": env("ROOM_CREATE_RATE", default="20/hour"),
     "global_list": env("GLOBAL_LIST_RATE", default="1000/hour"),
 }
 
@@ -441,3 +445,14 @@ AUTH_USER_MODEL = "users.BaseUser"
 
 # Email
 DEFAULT_FROM_EMAIL = "no-reply@rolt.com"
+
+# Channels
+ASGI_APPLICATION = "config.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [(env("REDIS_URL", default="redis://redis:6379/0"))],
+        },
+    },
+}
