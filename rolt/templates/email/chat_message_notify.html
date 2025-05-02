@@ -54,10 +54,14 @@
     <div class="email-container">
       <h2>📩 New Chat Message Received</h2>
       <p>
-        <strong>{{ user_email }}</strong> sent a message in room
-        <strong>{{ room_name }}</strong>
+        <strong>{{ user_email }}</strong> has started a new chat in
+        <strong>Room:</strong> <em>{{ room_name }}</em>.
       </p>
-      <p>Please assign a supporter to reply as soon as possible.</p>
+      <p>
+        <strong>Message:</strong>
+      </p>
+      <div class="message-box">{{ content }}</div>
+      <p>Please assign a supporter to handle this conversation promptly.</p>
       <div class="footer">This is an automated message from Rolt Chat System. © {{ current_year }}</div>
     </div>
   </body>

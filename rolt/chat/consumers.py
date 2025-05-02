@@ -94,6 +94,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "email/chat_message_notify.html",
             {
                 "user_email": user.email,
+                "content": content,
                 "room_name": room.name,
                 "current_year": now().year,
             },
