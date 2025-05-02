@@ -24,6 +24,9 @@ class Room(BaseModel):
     )
     is_active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Message(BaseModel):
     room = models.ForeignKey(
@@ -38,3 +41,6 @@ class Message(BaseModel):
     )
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.email}"

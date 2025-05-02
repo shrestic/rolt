@@ -1,5 +1,7 @@
+import asyncio
 import json
 import logging
+import time
 
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
@@ -17,7 +19,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
         self.room_group_name = f"chat_{self.room_name}"
+        self.last_active = time.time()
+        self.timeout_seconds = 300  # 5 minutes
 
+        # Start timeout watcher
+        self.timeout_task = asyncio.create_task(self.watch_inactivity())
         # Join channel layer group
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
         await self.accept()
@@ -39,8 +45,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "room_name": self.room_name,
             },
         )
+        if hasattr(self, "timeout_task"):
+            self.timeout_task.cancel()
 
     async def receive(self, text_data):
+        self.last_active = time.time()
         try:
             data = json.loads(text_data)
             content = data.get("message")
@@ -131,3 +140,41 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 },
             ),
         )
+
+    async def watch_inactivity(self):
+        try:
+            while True:
+                await asyncio.sleep(10)  # Check every 10 seconds
+                if time.time() - self.last_active > self.timeout_seconds:
+                    # Send system message before closing
+                    try:
+                        await self.send(
+                            text_data=json.dumps(
+                                {
+                                    "message": "You have been inactive for too long. Closing connection.",  # noqa: E501
+                                    "user": "system",
+                                },
+                            ),
+                        )
+                    except Exception as send_error:  # noqa: BLE001
+                        logger.warning(
+                            "[INACTIVE] Could not notify before closing",
+                            extra={"error": str(send_error)},
+                        )
+
+                    logger.info(
+                        "[INACTIVE] Closing connection due to inactivity",
+                        extra={
+                            "channel": self.channel_name,
+                            "user": str(self.scope.get("user")),
+                        },
+                    )
+                    await self.close(code=4000)
+                    break
+        except asyncio.CancelledError:
+            pass  # Task was cancelled, exit gracefully
+        except Exception as e:
+            logger.exception(
+                "[INACTIVITY WATCHER ERROR] An error occurred in the inactivity watcher",  # noqa: E501
+                extra={"exception": str(e)},
+            )
