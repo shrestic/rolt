@@ -24,7 +24,9 @@ class PaymentTransaction(BaseModel):
     # Reference to the associated order
     order = models.ForeignKey(
         Order,
-        on_delete=models.CASCADE,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="transactions",
     )
 

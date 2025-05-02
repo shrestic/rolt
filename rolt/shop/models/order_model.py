@@ -18,7 +18,7 @@ class Order(BaseModel):
         REFUNDED = "refunded", "Refunded"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
     status = models.CharField(
         max_length=20,
         choices=StatusChoices.choices,
@@ -38,7 +38,7 @@ class Order(BaseModel):
 
 class OrderItem(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name="items")
 
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.UUIDField()
