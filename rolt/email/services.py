@@ -40,13 +40,13 @@ def email_send(email: Email) -> Email:
             raise ApplicationError(message=msg)
 
     subject = email.subject
-    from_email = "styleguide-example@hacksoft.io"
-    to = email.to
+    sender = email.sender
+    recipient = email.recipient
 
     html = email.html
     plain_text = email.plain_text
 
-    msg = EmailMultiAlternatives(subject, plain_text, from_email, [to])
+    msg = EmailMultiAlternatives(subject, plain_text, sender, [recipient])
     msg.attach_alternative(html, "text/html")
 
     msg.send()
