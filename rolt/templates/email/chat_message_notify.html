@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>New Chat Message</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f6f6f6;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: auto;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .message-box {
+        background-color: #f0f4ff;
+        border-left: 4px solid #007bff;
+        padding: 16px;
+        margin: 20px 0;
+        border-radius: 6px;
+        color: #333333;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      .footer {
+        margin-top: 30px;
+        font-size: 12px;
+        color: #999999;
+        text-align: center;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #ffffff !important;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <h2>📩 New Chat Message Received</h2>
+      <p>
+        <strong>{{ user_email }}</strong> has started a new chat in
+        <strong>Room:</strong> <em>{{ room_name }}</em>.
+      </p>
+      <p>
+        <strong>Message:</strong>
+      </p>
+      <div class="message-box">{{ content }}</div>
+      <p>Please assign a supporter to handle this conversation promptly.</p>
+      <div class="footer">This is an automated message from Rolt Chat System. © {{ current_year }}</div>
+    </div>
+  </body>
+</html>

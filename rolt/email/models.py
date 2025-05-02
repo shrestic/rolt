@@ -18,7 +18,8 @@ class Email(BaseModel):
         default=Status.READY,
     )
 
-    to = models.EmailField()
+    sender = models.EmailField()
+    recipient = models.EmailField()
     subject = models.CharField(max_length=255)
 
     html = models.TextField()

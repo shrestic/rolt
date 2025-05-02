@@ -446,6 +446,9 @@ AUTH_USER_MODEL = "users.BaseUser"
 # Email
 DEFAULT_FROM_EMAIL = "no-reply@rolt.com"
 
+SUPPORT_ALERT_EMAIL = "support@rolt.com"
+EMAIL_SENDING_FAILURE_TRIGGER = False
+
 # Channels
 ASGI_APPLICATION = "config.asgi.application"
 CHANNEL_LAYERS = {

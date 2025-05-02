@@ -6,7 +6,7 @@ from rolt.email.services import email_send_all
 
 @admin.register(Email)
 class EmailAdmin(admin.ModelAdmin):
-    list_display = ["id", "subject", "to", "status", "sent_at"]
+    list_display = ["id", "subject", "sender", "recipient", "status", "sent_at"]
     actions = ["send_email"]
 
     def get_queryset(self, request):
