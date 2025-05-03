@@ -12,8 +12,6 @@ class Order(BaseModel):
     class StatusChoices(models.TextChoices):
         PENDING = "pending", "Pending"
         PAID = "paid", "Paid"
-        SHIPPED = "shipped", "Shipped"
-        DELIVERED = "delivered", "Delivered"
         CANCELLED = "cancelled", "Cancelled"
         REFUNDED = "refunded", "Refunded"
 
