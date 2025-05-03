@@ -83,10 +83,10 @@ class TestOrderApi:
 
         response = api_client.patch(
             f"/shop/order/{order.id}/update-status/",
-            data={"status": OrderStatus.SHIPPED},
+            data={"status": OrderStatus.CANCELLED},
             format="json",
         )
 
         assert response.status_code == status.HTTP_200_OK
         order.refresh_from_db()
-        assert order.status == OrderStatus.SHIPPED
+        assert order.status == OrderStatus.CANCELLED
