@@ -4,13 +4,17 @@
         "billpayment",
         "digestmod",
         "DJOSER",
+        "fakeuser",
         "GATERON",
         "Keycap",
         "keycaps",
+        "orderitem",
+        "orderitems",
         "paydate",
         "reqs",
         "rolt",
         "simplejwt",
+        "testpass",
         "TMNCODE",
         "vnpay"
     ],
@@ -18,5 +22,5 @@
         "."
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true,
+    "python.testing.pytestEnabled": true
 }
