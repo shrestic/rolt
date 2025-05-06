@@ -13,6 +13,7 @@ def is_product_manager(request):
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ("id", "customer", "product_display", "quantity", "added_at")
+    list_select_related = ("customer", "content_type")
 
     def get_fields(self, request, obj=None):
         return (
@@ -61,6 +62,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ("status",)
     search_fields = ("id", "customer__user__email")
     inlines = [OrderItemInline]
+    list_select_related = ("customer__user",)
 
     def get_readonly_fields(self, request, obj=None):
         if request.user.is_superuser:
@@ -111,6 +113,7 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     )
+    list_select_related = ("order",)
 
     def has_add_permission(self, request):
         return request.user.is_superuser

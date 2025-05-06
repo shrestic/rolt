@@ -33,6 +33,12 @@ class BuildAdmin(admin.ModelAdmin):
         "customer__user__username",
     )
     ordering = ("-created_at",)
+    list_select_related = (
+        "kit",
+        "switch",
+        "keycap",
+        "customer__user",
+    )
 
     def has_change_permission(self, request, obj=None):
         if obj and not obj.is_preset:
@@ -81,6 +87,7 @@ class SelectedServiceAdmin(admin.ModelAdmin):
     list_display = ("build", "service", "price")
     list_filter = ("service__name",)
     search_fields = ("build__name", "service__name")
+    list_select_related = ("build", "service")
 
 
 class ShowcaseForm(forms.ModelForm):
@@ -103,6 +110,7 @@ class ShowcaseAdmin(admin.ModelAdmin):
     search_fields = ("title", "description", "build__name")
     readonly_fields = ("preview_image",)
     ordering = ("-created_at",)
+    list_select_related = ("build",)
 
     @admin.display(description="Image")
     def preview_image(self, obj):

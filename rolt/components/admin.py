@@ -21,6 +21,7 @@ class KeycapAdmin(admin.ModelAdmin):
     search_fields = ("name", "code", "colorway", "theme_name")
     list_filter = ("manufacturer", "profile", "material", "shine_through")
     readonly_fields = ("preview_image",)
+    list_select_related = ("manufacturer",)
 
     @admin.display(
         description="Image",
@@ -57,6 +58,7 @@ class SwitchAdmin(admin.ModelAdmin):
         "pin_type",
     )
     readonly_fields = ("preview_image",)
+    list_select_related = ("manufacturer",)
 
     @admin.display(
         description="Image",
@@ -102,6 +104,7 @@ class KitAdmin(admin.ModelAdmin):
         "knob",
     )
     readonly_fields = ("preview_image",)
+    list_select_related = ("manufacturer",)
 
     @admin.display(
         description="Image",
