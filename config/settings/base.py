@@ -302,7 +302,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BEAT_SCHEDULE = {
     "update-expired-warranties": {
         "task": "rolt.warranty.tasks.update_expired_warranties",
-        "schedule": crontab(hour=0, minute=0),  # Chạy lúc 00:00 hàng ngày
+        "schedule": crontab(hour=0, minute=0),
     },
 }
 
