@@ -18,5 +18,5 @@ VNPAY_TMN_CODE=7ZRJTRMX
 VNPAY_HASH_SECRET_KEY=0T7RRHVLRR9Z4BQSACJVT3MNAGAJY1EF
 # Used by the frontend to show payment status; not for backend database updates
 # But for now , we are using the same URL for both
-VNPAY_RETURN_URL=https://748b-14-191-121-112.ngrok-free.app/shop/payment/return/
-TEMP_DOMAIN=748b-14-191-121-112.ngrok-free.app
+VNPAY_RETURN_URL=https://7607-14-191-121-112.ngrok-free.app/shop/payment/return/
+TEMP_DOMAIN=7607-14-191-121-112.ngrok-free.app

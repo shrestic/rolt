@@ -62,7 +62,6 @@ class BuildOutputSerializer(serializers.ModelSerializer):
             "name",
             "kit",
             "switch",
-            "switch_quantity",
             "keycap",
             "total_price",
             "selected_services",
@@ -136,7 +135,6 @@ class BuildCreateApi(APIView):
         kit_code = serializers.CharField()
         switch_code = serializers.CharField()
         keycap_code = serializers.CharField()
-        switch_quantity = serializers.IntegerField(min_value=1)
         service_codes = serializers.ListField(
             child=serializers.CharField(),
             required=False,
@@ -154,8 +152,6 @@ class BuildCreateApi(APIView):
         if not all([kit, switch, keycap]):
             msg = "Kit, switch, or keycap not found"
             raise ApplicationError(msg)
-
-        switch_quantity = data["switch_quantity"]
         name = data.get("name", "Build")
         user = request.user
         is_customer = user_in_group(user, "Customer")
@@ -170,7 +166,6 @@ class BuildCreateApi(APIView):
                 kit=kit,
                 switch=switch,
                 keycap=keycap,
-                switch_quantity=switch_quantity,
                 customer=customer,
             ):
                 msg = "You already created this build"
@@ -184,7 +179,6 @@ class BuildCreateApi(APIView):
                 kit=kit,
                 switch=switch,
                 keycap=keycap,
-                switch_quantity=switch_quantity,
                 customer=customer,
                 is_preset=False,
                 selected_services=selected_services,
@@ -195,7 +189,6 @@ class BuildCreateApi(APIView):
                 kit=kit,
                 switch=switch,
                 keycap=keycap,
-                switch_quantity=switch_quantity,
                 customer=None,
             ):
                 msg = "This preset build already exists"
@@ -206,7 +199,6 @@ class BuildCreateApi(APIView):
                 kit=kit,
                 switch=switch,
                 keycap=keycap,
-                switch_quantity=switch_quantity,
                 customer=None,
                 is_preset=True,
                 selected_services=None,
@@ -228,7 +220,6 @@ class BuildUpdateApi(APIView):
         kit_code = serializers.CharField(required=False)
         switch_code = serializers.CharField(required=False)
         keycap_code = serializers.CharField(required=False)
-        switch_quantity = serializers.IntegerField(min_value=1, required=False)
         service_codes = serializers.ListField(
             child=serializers.CharField(),
             required=False,
@@ -296,7 +287,6 @@ class BuildUpdateApi(APIView):
             kit=kit,
             switch=switch,
             keycap=keycap,
-            switch_quantity=data.get("switch_quantity"),
             selected_services=selected_services,
         )
         return Response(status=status.HTTP_200_OK)

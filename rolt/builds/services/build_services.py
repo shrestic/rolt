@@ -11,13 +11,12 @@ from rolt.components.models.switch_model import Switch
 def calculate_total_price(
     kit: Kit,
     switch: Switch,
-    switch_quantity: int,
     keycap: Keycap,
     extra_services: list[Service] | None,
 ):
     base_price = (
         (kit.price or 0)
-        + (switch.price_per_switch or 0) * switch_quantity
+        + (switch.price_per_switch or 0) * kit.number_of_keys
         + (keycap.price or 0)
     )
     if extra_services:
@@ -34,7 +33,6 @@ def build_create(  # noqa: PLR0913
     kit: Kit,
     switch: Switch,
     keycap: Keycap,
-    switch_quantity: int,
     customer: Customer | None,
     is_preset=False,
     selected_services: list[Service] | None,  # List[Service] or None
@@ -42,21 +40,21 @@ def build_create(  # noqa: PLR0913
     total_price = calculate_total_price(
         kit=kit,
         switch=switch,
-        switch_quantity=switch_quantity,
         keycap=keycap,
         extra_services=selected_services if not is_preset else None,
     )
 
-    build = Build.objects.create(
+    build = Build(
         name=name,
         kit=kit,
         switch=switch,
         keycap=keycap,
-        switch_quantity=switch_quantity,
         total_price=total_price,
         customer=customer,
         is_preset=is_preset,
     )
+    build.full_clean()
+    build.save()
 
     # Only attach services if not preset
     if not is_preset and selected_services:
@@ -78,7 +76,6 @@ def build_update(  # noqa: PLR0913
     kit: Kit | None,
     switch: Switch | None,
     keycap: Keycap | None,
-    switch_quantity: int | None,
     selected_services: list[Service] | None,
 ) -> Build:
     fields_to_update = []
@@ -95,9 +92,6 @@ def build_update(  # noqa: PLR0913
     if keycap:
         instance.keycap = keycap
         fields_to_update.append("keycap")
-    if switch_quantity is not None:
-        instance.switch_quantity = switch_quantity
-        fields_to_update.append("switch_quantity")
 
     # Update selected services if provided (for custom builds only)
     if not instance.is_preset and selected_services is not None:
@@ -116,12 +110,11 @@ def build_update(  # noqa: PLR0913
     instance.total_price = calculate_total_price(
         kit=instance.kit,
         switch=instance.switch,
-        switch_quantity=instance.switch_quantity,
         keycap=instance.keycap,
         extra_services=extra_services,
     )
     fields_to_update.append("total_price")
-
+    instance.full_clean()
     instance.save(update_fields=fields_to_update)
     return instance
 

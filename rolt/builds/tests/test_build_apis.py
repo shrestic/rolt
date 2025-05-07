@@ -130,7 +130,6 @@ class TestBuildApi:
             "kit_code": "KIT123",
             "switch_code": "SW123",
             "keycap_code": "KC123",
-            "switch_quantity": 87,
             "service_codes": ["SRV1", "SRV2"],
         }
 
@@ -198,7 +197,6 @@ class TestBuildApi:
             kit=kit1,
             switch=switch,
             keycap=keycap,
-            switch_quantity=70,
             total_price=kit1.price + switch.price_per_switch * 70 + keycap.price,
         )
 

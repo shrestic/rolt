@@ -96,6 +96,7 @@ LOCAL_APPS = [
     "rolt.shop",
     "rolt.chat",
     "rolt.warranty",
+    "rolt.inventory",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

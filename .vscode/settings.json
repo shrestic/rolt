@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "accessoryinventory",
         "asgi",
         "billpayment",
         "digestmod",
@@ -7,6 +8,7 @@
         "fakeuser",
         "GATERON",
         "Keycap",
+        "keycapinventory",
         "keycaps",
         "orderitem",
         "orderitems",
@@ -14,6 +16,7 @@
         "reqs",
         "rolt",
         "simplejwt",
+        "switchinventory",
         "testpass",
         "TMNCODE",
         "vnpay"
