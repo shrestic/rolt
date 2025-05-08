@@ -7,6 +7,9 @@ from rolt.builds.models import Showcase
 from rolt.components.models import Keycap
 from rolt.components.models import Kit
 from rolt.components.models import Switch
+from rolt.inventory.models import KeycapInventory
+from rolt.inventory.models import KitInventory
+from rolt.inventory.models import SwitchInventory
 from rolt.manufacturers.models import Manufacturer
 
 
@@ -17,9 +20,27 @@ class TestShowcaseApi:
         api_client,
     ):
         manufacturer = baker.make(Manufacturer)
-        kit = baker.make(Kit, manufacturer=manufacturer)
+
+        # Create kit with specific number of keys
+        kit = baker.make(Kit, manufacturer=manufacturer, number_of_keys=87)
         switch = baker.make(Switch, manufacturer=manufacturer)
         keycap = baker.make(Keycap, manufacturer=manufacturer)
+
+        # Update inventory quantities to ensure sufficient stock
+        kit_inventory = KitInventory.objects.get(kit=kit)
+        kit_inventory.quantity = 10  # Ensure sufficient kit inventory
+        kit_inventory.save()
+
+        switch_inventory = SwitchInventory.objects.get(switch=switch)
+        # Ensure we have more switches than the number of keys in the kit
+        switch_inventory.quantity = kit.number_of_keys * 2  # Double the required amount
+        switch_inventory.save()
+
+        keycap_inventory = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inventory.quantity = 10  # Ensure sufficient keycaps
+        keycap_inventory.save()
+
+        # Now create the build after ensuring sufficient inventory
         build = baker.make(Build, is_preset=True, kit=kit, switch=switch, keycap=keycap)
         baker.make(Showcase, build=build, title="Featured Build")
 
@@ -37,7 +58,59 @@ class TestShowcaseApi:
         user = make_employee_is_product_manager()
         api_client.force_authenticate(user=user)
 
-        builds = baker.make(Build, is_preset=True, _quantity=2)
+        # Create components with sufficient inventory for builds
+        manufacturer = baker.make(Manufacturer)
+
+        # Create components for build 1
+        kit1 = baker.make(Kit, manufacturer=manufacturer, number_of_keys=87)
+        switch1 = baker.make(Switch, manufacturer=manufacturer)
+        keycap1 = baker.make(Keycap, manufacturer=manufacturer)
+
+        # Create components for build 2
+        kit2 = baker.make(
+            Kit,
+            manufacturer=manufacturer,
+            number_of_keys=61,
+        )  # Different keyboard size
+        switch2 = baker.make(Switch, manufacturer=manufacturer)
+        keycap2 = baker.make(Keycap, manufacturer=manufacturer)
+
+        # Update inventories to ensure sufficient stock for build 1
+        kit1_inventory = KitInventory.objects.get(kit=kit1)
+        kit1_inventory.quantity = 10
+        kit1_inventory.save()
+
+        switch1_inventory = SwitchInventory.objects.get(switch=switch1)
+        switch1_inventory.quantity = (
+            kit1.number_of_keys * 2
+        )  # Double the required switches
+        switch1_inventory.save()
+
+        keycap1_inventory = KeycapInventory.objects.get(keycap=keycap1)
+        keycap1_inventory.quantity = 10
+        keycap1_inventory.save()
+
+        # Update inventories to ensure sufficient stock for build 2
+        kit2_inventory = KitInventory.objects.get(kit=kit2)
+        kit2_inventory.quantity = 10
+        kit2_inventory.save()
+
+        switch2_inventory = SwitchInventory.objects.get(switch=switch2)
+        switch2_inventory.quantity = (
+            kit2.number_of_keys * 2
+        )  # Double the required switches
+        switch2_inventory.save()
+
+        keycap2_inventory = KeycapInventory.objects.get(keycap=keycap2)
+        keycap2_inventory.quantity = 10
+        keycap2_inventory.save()
+
+        # Create builds with the components
+        builds = [
+            baker.make(Build, is_preset=True, kit=kit1, switch=switch1, keycap=keycap1),
+            baker.make(Build, is_preset=True, kit=kit2, switch=switch2, keycap=keycap2),
+        ]
+
         payload = {
             "showcases": [
                 {
@@ -73,9 +146,36 @@ class TestShowcaseApi:
         user = make_employee_is_product_manager()
         api_client.force_authenticate(user=user)
 
-        build = baker.make(Build, is_preset=True)
-        baker.make(Showcase, build=build)
+        # Create components with specific configuration
+        manufacturer = baker.make(Manufacturer)
+        kit = baker.make(
+            Kit,
+            manufacturer=manufacturer,
+            number_of_keys=104,
+        )  # Full-size keyboard
+        switch = baker.make(Switch, manufacturer=manufacturer)
+        keycap = baker.make(Keycap, manufacturer=manufacturer)
 
+        # Update inventory quantities
+        kit_inventory = KitInventory.objects.get(kit=kit)
+        kit_inventory.quantity = 10
+        kit_inventory.save()
+
+        switch_inventory = SwitchInventory.objects.get(switch=switch)
+        switch_inventory.quantity = (
+            kit.number_of_keys * 2
+        )  # Double the required switches
+        switch_inventory.save()
+
+        keycap_inventory = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inventory.quantity = 10
+        keycap_inventory.save()
+
+        # Create build with sufficient inventory
+        build = baker.make(Build, is_preset=True, kit=kit, switch=switch, keycap=keycap)
+        baker.make(Showcase, build=build)  # Create initial showcase
+
+        # Try to create duplicate showcase
         payload = {
             "showcases": [
                 {
@@ -103,9 +203,36 @@ class TestShowcaseApi:
         user = make_employee_is_product_manager()
         api_client.force_authenticate(user=user)
 
-        build = baker.make(Build, is_preset=True)
+        # Create components with sufficient inventory
+        manufacturer = baker.make(Manufacturer)
+        kit = baker.make(
+            Kit,
+            manufacturer=manufacturer,
+            number_of_keys=75,
+        )  # 75% keyboard
+        switch = baker.make(Switch, manufacturer=manufacturer)
+        keycap = baker.make(Keycap, manufacturer=manufacturer)
+
+        # Update inventory quantities
+        kit_inventory = KitInventory.objects.get(kit=kit)
+        kit_inventory.quantity = 10
+        kit_inventory.save()
+
+        switch_inventory = SwitchInventory.objects.get(switch=switch)
+        switch_inventory.quantity = (
+            kit.number_of_keys * 2
+        )  # Double the required switches
+        switch_inventory.save()
+
+        keycap_inventory = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inventory.quantity = 10
+        keycap_inventory.save()
+
+        # Create build and showcase
+        build = baker.make(Build, is_preset=True, kit=kit, switch=switch, keycap=keycap)
         showcase = baker.make(Showcase, build=build)
 
+        # Test deletion
         response = api_client.delete(f"/builds/showcases/{showcase.id}/delete/")
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Showcase.objects.filter(id=showcase.id).exists()

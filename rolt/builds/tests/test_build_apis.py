@@ -8,6 +8,9 @@ from rolt.builds.models import Service
 from rolt.components.models import Keycap
 from rolt.components.models import Kit
 from rolt.components.models import Switch
+from rolt.inventory.models import KeycapInventory
+from rolt.inventory.models import KitInventory
+from rolt.inventory.models import SwitchInventory
 from rolt.manufacturers.models import Manufacturer
 
 
@@ -23,9 +26,22 @@ class TestBuildApi:
         api_client.force_authenticate(user=user)
 
         manufacturer = baker.make(Manufacturer)
-        kit = baker.make(Kit, manufacturer=manufacturer)
+        kit = baker.make(Kit, manufacturer=manufacturer, number_of_keys=87)
         switch = baker.make(Switch, manufacturer=manufacturer)
         keycap = baker.make(Keycap, manufacturer=manufacturer)
+
+        # Set inventory quantities - enough for 2 builds
+        kit_inv = KitInventory.objects.get(kit=kit)
+        kit_inv.quantity = 5
+        kit_inv.save()
+
+        switch_inv = SwitchInventory.objects.get(switch=switch)
+        switch_inv.quantity = 200  # Enough for multiple keyboards
+        switch_inv.save()
+
+        keycap_inv = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inv.quantity = 5
+        keycap_inv.save()
 
         baker.make(
             Build,
@@ -42,9 +58,22 @@ class TestBuildApi:
 
     def test_if_anyone_can_list_presets_return_200_and_2_items(self, api_client):
         manufacturer = baker.make(Manufacturer)
-        kit = baker.make(Kit, manufacturer=manufacturer)
+        kit = baker.make(Kit, manufacturer=manufacturer, number_of_keys=87)
         switch = baker.make(Switch, manufacturer=manufacturer)
         keycap = baker.make(Keycap, manufacturer=manufacturer)
+
+        # Set inventory quantities - enough for 2 presets
+        kit_inv = KitInventory.objects.get(kit=kit)
+        kit_inv.quantity = 5
+        kit_inv.save()
+
+        switch_inv = SwitchInventory.objects.get(switch=switch)
+        switch_inv.quantity = 200  # Enough for multiple keyboards
+        switch_inv.save()
+
+        keycap_inv = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inv.quantity = 5
+        keycap_inv.save()
 
         baker.make(
             Build,
@@ -70,9 +99,21 @@ class TestBuildApi:
         api_client.force_authenticate(user=user)
 
         manufacturer = baker.make(Manufacturer)
-        kit = baker.make(Kit, manufacturer=manufacturer)
+        kit = baker.make(Kit, manufacturer=manufacturer, number_of_keys=87)
         switch = baker.make(Switch, manufacturer=manufacturer)
         keycap = baker.make(Keycap, manufacturer=manufacturer)
+
+        kit_inv = KitInventory.objects.get(kit=kit)
+        kit_inv.quantity = 2
+        kit_inv.save()
+
+        switch_inv = SwitchInventory.objects.get(switch=switch)
+        switch_inv.quantity = 100  # Enough for a keyboard
+        switch_inv.save()
+
+        keycap_inv = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inv.quantity = 2
+        keycap_inv.save()
 
         build = baker.make(
             Build,
@@ -91,9 +132,21 @@ class TestBuildApi:
         api_client,
     ):
         manufacturer = baker.make(Manufacturer)
-        kit = baker.make(Kit, manufacturer=manufacturer)
+        kit = baker.make(Kit, manufacturer=manufacturer, number_of_keys=87)
         switch = baker.make(Switch, manufacturer=manufacturer)
         keycap = baker.make(Keycap, manufacturer=manufacturer)
+
+        kit_inv = KitInventory.objects.get(kit=kit)
+        kit_inv.quantity = 2
+        kit_inv.save()
+
+        switch_inv = SwitchInventory.objects.get(switch=switch)
+        switch_inv.quantity = 100  # Enough for a keyboard
+        switch_inv.save()
+
+        keycap_inv = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inv.quantity = 2
+        keycap_inv.save()
 
         build = baker.make(
             Build,
@@ -118,9 +171,32 @@ class TestBuildApi:
         api_client.force_authenticate(user=user)
 
         manufacturer = baker.make(Manufacturer)
-        baker.make(Kit, manufacturer=manufacturer, code="KIT123", price=10.8)
-        baker.make(Switch, manufacturer=manufacturer, code="SW123", price_per_switch=5)
-        baker.make(Keycap, manufacturer=manufacturer, code="KC123", price=15.7)
+        kit = baker.make(
+            Kit,
+            manufacturer=manufacturer,
+            code="KIT123",
+            price=10.8,
+            number_of_keys=87,
+        )
+        switch = baker.make(
+            Switch,
+            manufacturer=manufacturer,
+            code="SW123",
+            price_per_switch=5,
+        )
+        keycap = baker.make(Keycap, manufacturer=manufacturer, code="KC123", price=15.7)
+
+        kit_inv = KitInventory.objects.get(kit=kit)
+        kit_inv.quantity = 2
+        kit_inv.save()
+
+        switch_inv = SwitchInventory.objects.get(switch=switch)
+        switch_inv.quantity = 100  # Enough for a keyboard
+        switch_inv.save()
+
+        keycap_inv = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inv.quantity = 2
+        keycap_inv.save()
 
         service1 = baker.make(Service, code="SRV1", price=10)
         service2 = baker.make(Service, code="SRV2", price=5.5)
@@ -130,7 +206,6 @@ class TestBuildApi:
             "kit_code": "KIT123",
             "switch_code": "SW123",
             "keycap_code": "KC123",
-            "switch_quantity": 87,
             "service_codes": ["SRV1", "SRV2"],
         }
 
@@ -153,10 +228,22 @@ class TestBuildApi:
         api_client.force_authenticate(user=user)
 
         manufacturer = baker.make(Manufacturer)
-        kit = baker.make(Kit, manufacturer=manufacturer)
+        kit = baker.make(Kit, manufacturer=manufacturer, number_of_keys=87)
         switch = baker.make(Switch, manufacturer=manufacturer)
         keycap = baker.make(Keycap, manufacturer=manufacturer)
         service = baker.make(Service)
+
+        kit_inv = KitInventory.objects.get(kit=kit)
+        kit_inv.quantity = 2
+        kit_inv.save()
+
+        switch_inv = SwitchInventory.objects.get(switch=switch)
+        switch_inv.quantity = 100  # Enough for a keyboard
+        switch_inv.save()
+
+        keycap_inv = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inv.quantity = 2
+        keycap_inv.save()
 
         build = baker.make(
             Build,
@@ -182,8 +269,20 @@ class TestBuildApi:
         api_client.force_authenticate(user=user)
 
         manufacturer = baker.make(Manufacturer)
-        kit1 = baker.make(Kit, manufacturer=manufacturer, code="KIT1", price=10.8)
-        baker.make(Kit, manufacturer=manufacturer, code="KIT2", price=12.0)
+        kit1 = baker.make(
+            Kit,
+            manufacturer=manufacturer,
+            code="KIT1",
+            price=10.8,
+            number_of_keys=70,
+        )
+        kit2 = baker.make(
+            Kit,
+            manufacturer=manufacturer,
+            code="KIT2",
+            price=12.0,
+            number_of_keys=70,
+        )
         switch = baker.make(
             Switch,
             manufacturer=manufacturer,
@@ -192,13 +291,30 @@ class TestBuildApi:
         )
         keycap = baker.make(Keycap, manufacturer=manufacturer, code="KC1", price=100.5)
 
+        # Inventory for kit1
+        kit1_inv = KitInventory.objects.get(kit=kit1)
+        kit1_inv.quantity = 2
+        kit1_inv.save()
+
+        # Inventory for kit2
+        kit2_inv = KitInventory.objects.get(kit=kit2)
+        kit2_inv.quantity = 2
+        kit2_inv.save()
+
+        switch_inv = SwitchInventory.objects.get(switch=switch)
+        switch_inv.quantity = 150  # Enough for both keyboards
+        switch_inv.save()
+
+        keycap_inv = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inv.quantity = 2
+        keycap_inv.save()
+
         build = baker.make(
             Build,
             customer=customer,
             kit=kit1,
             switch=switch,
             keycap=keycap,
-            switch_quantity=70,
             total_price=kit1.price + switch.price_per_switch * 70 + keycap.price,
         )
 
@@ -222,9 +338,21 @@ class TestBuildApi:
         api_client.force_authenticate(user=user)
 
         manufacturer = baker.make(Manufacturer)
-        kit = baker.make(Kit, manufacturer=manufacturer)
+        kit = baker.make(Kit, manufacturer=manufacturer, number_of_keys=87)
         switch = baker.make(Switch, manufacturer=manufacturer)
         keycap = baker.make(Keycap, manufacturer=manufacturer)
+
+        kit_inv = KitInventory.objects.get(kit=kit)
+        kit_inv.quantity = 2
+        kit_inv.save()
+
+        switch_inv = SwitchInventory.objects.get(switch=switch)
+        switch_inv.quantity = 100  # Enough for a keyboard
+        switch_inv.save()
+
+        keycap_inv = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inv.quantity = 2
+        keycap_inv.save()
 
         build = baker.make(
             Build,
@@ -237,3 +365,73 @@ class TestBuildApi:
         response = api_client.delete(f"/builds/{build.id}/delete/")
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Build.objects.filter(id=build.id).exists()
+
+    def test_if_inventory_is_checked_when_building_return_400_for_insufficient_stock(
+        self,
+        api_client,
+        make_customer,
+    ):
+        customer = make_customer()
+        user = customer.user
+        api_client.force_authenticate(user=user)
+        manufacturer = baker.make(Manufacturer)
+
+        # Create kit with a specific code - signals will create inventory automatically
+        kit = baker.make(
+            Kit,
+            manufacturer=manufacturer,
+            code="KIT_LOW",
+            price=50.0,
+            number_of_keys=87,
+        )
+
+        # Create switch with a specific code - signals will create inventory automatically  # noqa: E501
+        switch = baker.make(
+            Switch,
+            manufacturer=manufacturer,
+            code="SW_LOW",
+            price_per_switch=0.5,
+        )
+
+        # Create keycap with a specific code - signals will create inventory automatically  # noqa: E501
+        keycap = baker.make(
+            Keycap,
+            manufacturer=manufacturer,
+            code="KC_LOW",
+            price=25.0,
+        )
+
+        # Update inventory quantities to our test scenario instead of creating new records  # noqa: E501
+        # The signal handlers have already created the initial inventory records
+        kit_inventory = KitInventory.objects.get(kit=kit)
+        kit_inventory.quantity = 0  # Zero kit inventory
+        kit_inventory.save()
+
+        switch_inventory = SwitchInventory.objects.get(switch=switch)
+        switch_inventory.quantity = (
+            10  # Not enough switches for the kit (assuming kit needs more)
+        )
+        switch_inventory.save()
+
+        keycap_inventory = KeycapInventory.objects.get(keycap=keycap)
+        keycap_inventory.quantity = 1  # Enough keycaps
+        keycap_inventory.save()
+
+        # Verify initial inventory levels
+        assert KitInventory.objects.get(kit=kit).quantity == 0
+        assert SwitchInventory.objects.get(switch=switch).quantity == 10  # noqa: PLR2004
+        assert KeycapInventory.objects.get(keycap=keycap).quantity == 1
+
+        # Prepare payload for testing the build creation
+        payload = {
+            "name": "Build With Insufficient Stock",
+            "kit_code": "KIT_LOW",
+            "switch_code": "SW_LOW",
+            "keycap_code": "KC_LOW",
+        }
+
+        # This should fail with a 400 because there's not enough kit stock
+        response = api_client.post("/builds/create/", data=payload, format="json")
+
+        # Verify the response status code
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

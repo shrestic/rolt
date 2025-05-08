@@ -32,7 +32,6 @@ class Build(BaseModel):
         on_delete=models.CASCADE,
         related_name="builds",
     )
-    switch_quantity = models.PositiveIntegerField()
     keycap = models.ForeignKey(
         Keycap,
         on_delete=models.CASCADE,

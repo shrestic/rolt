@@ -18,7 +18,6 @@ class BuildAdmin(admin.ModelAdmin):
         "kit",
         "switch",
         "keycap",
-        "switch_quantity",
         "total_price",
         "is_preset",
         "customer",

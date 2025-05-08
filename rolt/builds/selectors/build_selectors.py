@@ -15,7 +15,6 @@ def build_exists(
     kit: Kit,
     switch: Switch,
     keycap: Keycap,
-    switch_quantity: int,
     customer: Customer | None,
 ) -> bool:
     """
@@ -28,7 +27,6 @@ def build_exists(
         "kit": kit,
         "switch": switch,
         "keycap": keycap,
-        "switch_quantity": switch_quantity,
     }
 
     if customer:

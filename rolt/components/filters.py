@@ -10,6 +10,7 @@ from rolt.components.models.switch_model import Switch
 
 class KitFilter(FilterSet):
     name = CharFilter(field_name="name", lookup_expr="icontains")
+    number_of_keys = NumberFilter(field_name="number_of_keys", lookup_expr="exact")
     layout = CharFilter(field_name="layout", lookup_expr="icontains")
     layout_detail = CharFilter(field_name="layout_detail", lookup_expr="icontains")
     case_spec = CharFilter(field_name="case_spec", lookup_expr="icontains")
@@ -36,6 +37,7 @@ class KitFilter(FilterSet):
         model = Kit
         fields = [
             "name",
+            "number_of_keys",
             "layout",
             "layout_detail",
             "case_spec",
@@ -133,10 +135,7 @@ class KeycapFilter(FilterSet):
     )
 
     shine_through = BooleanFilter(field_name="shine_through")
-
-    number_of_keys_min = NumberFilter(field_name="number_of_keys", lookup_expr="gte")
-    number_of_keys_max = NumberFilter(field_name="number_of_keys", lookup_expr="lte")
-
+    number_of_keys = NumberFilter(field_name="number_of_keys", lookup_expr="exact")
     thickness_min = NumberFilter(field_name="thickness", lookup_expr="gte")
     thickness_max = NumberFilter(field_name="thickness", lookup_expr="lte")
 
@@ -159,8 +158,7 @@ class KeycapFilter(FilterSet):
             "sound_profile",
             "manufacturer",
             "manufacturer_code",
-            "number_of_keys_min",
-            "number_of_keys_max",
+            "number_of_keys",
             "thickness_min",
             "thickness_max",
             "price_min",

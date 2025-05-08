@@ -40,6 +40,7 @@ class KitListApi(APIView):
 
     class FilterSerializer(serializers.Serializer):
         name = serializers.CharField(required=False)
+        number_of_keys = serializers.IntegerField(required=False)
         layout = serializers.CharField(required=False)
         layout_detail = serializers.CharField(required=False)
         case_spec = serializers.CharField(required=False)
