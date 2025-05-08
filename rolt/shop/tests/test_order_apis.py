@@ -4,6 +4,7 @@ from model_bakery import baker
 from rest_framework import status
 
 from rolt.components.models.switch_model import Switch
+from rolt.inventory.models import SwitchInventory
 from rolt.shop.models.cart_model import CartItem
 from rolt.shop.models.order_model import Order
 from rolt.shop.models.order_model import OrderItem
@@ -23,6 +24,10 @@ class TestOrderApi:
         api_client.force_authenticate(user=user)
 
         product = baker.make(Switch, price_per_switch=1.25)
+
+        switch_inv = SwitchInventory.objects.get(switch=product)
+        switch_inv.quantity = 200  # Enough for multiple keyboards
+        switch_inv.save()
         baker.make(
             CartItem,
             customer=customer,
