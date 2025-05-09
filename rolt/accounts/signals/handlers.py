@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -16,3 +17,5 @@ def create_customer_for_new_user(sender, **kwargs):
             EmployeeService().employee_create(user=user)
         else:
             CustomerService().customer_create(user=user)
+            group, _ = Group.objects.get_or_create(name="Customer")
+            user.groups.add(group)

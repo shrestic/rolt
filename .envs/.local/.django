@@ -20,3 +20,6 @@ VNPAY_HASH_SECRET_KEY=0T7RRHVLRR9Z4BQSACJVT3MNAGAJY1EF
 # But for now , we are using the same URL for both
 VNPAY_RETURN_URL=https://7607-14-191-121-112.ngrok-free.app/shop/payment/return/
 TEMP_DOMAIN=7607-14-191-121-112.ngrok-free.app
+
+DEFAULT_FROM_EMAIL=no-reply@rolt.com
+SUPPORT_ALERT_EMAIL=support@rolt.com
