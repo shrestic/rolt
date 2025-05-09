@@ -15,7 +15,7 @@ channels-redis==4.2.1
 Faker==37.1.0
 # Django
 # ------------------------------------------------------------------------------
-django==5.1.8  # pyup: < 5.1  # https://www.djangoproject.com/
+django==5.2.1  # pyup: < 5.1  # https://www.djangoproject.com/
 django-environ==0.12.0  # https://github.com/joke2k/django-environ
 django-model-utils==5.0.0  # https://github.com/jazzband/django-model-utils
 django-crispy-forms==2.4  # https://github.com/django-crispy-forms/django-crispy-forms
@@ -35,4 +35,4 @@ pyotp==2.9.0
 qrcode==8.2
 
 # AWS
-boto3==1.38.7
+boto3==1.38.12
