@@ -3,16 +3,13 @@ log:
 
 entryPoints:
   web:
-    # http
     address: ':80'
     http:
-      # https://doc.traefik.io/traefik/routing/entrypoints/#entrypoint
       redirections:
         entryPoint:
           to: web-secure
 
   web-secure:
-    # https
     address: ':443'
 
   flower:
@@ -20,44 +17,60 @@ entryPoints:
 
 certificatesResolvers:
   letsencrypt:
-    # https://doc.traefik.io/traefik/https/acme/#lets-encrypt
     acme:
       email: 'nhatphongcgp@gmail.com'
       storage: /etc/traefik/acme/acme.json
-      # https://doc.traefik.io/traefik/https/acme/#httpchallenge
       httpChallenge:
         entryPoint: web
 
 http:
   routers:
+    redirect-to-www:
+      rule: 'Host(`rolt.cloud`)'
+      entryPoints:
+        - web
+        - web-secure
+      middlewares:
+        - redirect-to-www
+      service: noop
+      tls:
+        certResolver: letsencrypt
+
     web-secure-router:
-      rule: 'Host(`rolt.com`) || Host(`www.rolt.com`)'
+      rule: 'Host(`www.rolt.cloud`)'
       entryPoints:
         - web-secure
       middlewares:
         - csrf
       service: django
       tls:
-        # https://doc.traefik.io/traefik/routing/routers/#certresolver
         certResolver: letsencrypt
 
     flower-secure-router:
-      rule: 'Host(`rolt.com`)'
+      rule: 'Host(`www.rolt.cloud`) && PathPrefix(`/flower`)'
       entryPoints:
         - flower
       service: flower
       tls:
-        # https://doc.traefik.io/traefik/master/routing/routers/#certresolver
         certResolver: letsencrypt
 
   middlewares:
+    redirect-to-www:
+      redirectRegex:
+        regex: '^https?://rolt.cloud/(.*)'
+        replacement: 'https://www.rolt.cloud/$1'
+        permanent: true
+
     csrf:
-      # https://doc.traefik.io/traefik/master/middlewares/http/headers/#hostsproxyheaders
-      # https://docs.djangoproject.com/en/dev/ref/csrf/#ajax
       headers:
         hostsProxyHeaders: ['X-CSRFToken']
 
   services:
+    noop:
+      loadBalancer:
+        servers:
+          - url: http://localhost
+
     django:
       loadBalancer:
         servers:
@@ -69,7 +82,6 @@ http:
           - url: http://flower:5555
 
 providers:
-  # https://doc.traefik.io/traefik/master/providers/file/
   file:
     filename: /etc/traefik/traefik.yml
     watch: true

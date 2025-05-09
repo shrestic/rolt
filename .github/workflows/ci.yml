@@ -7,10 +7,10 @@ env:
 
 on:
   pull_request:
-    branches: ['main', 'dev', 'feat/**', 'release/**', 'bugfix/**']
+    branches: ['main', 'dev','prod','feat/**', 'release/**', 'bugfix/**']
     paths-ignore: ['docs/**']
   push:
-    branches: ['main', 'dev', 'feat/**', 'release/**', 'bugfix/**']
+    branches: ['main', 'dev','prod','feat/**', 'release/**', 'bugfix/**']
     paths-ignore: ['docs/**']
 
 concurrency:
