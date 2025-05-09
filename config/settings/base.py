@@ -458,9 +458,9 @@ SOCIAL_AUTH_JSONFIELD_ENABLED = True
 AUTH_USER_MODEL = "users.BaseUser"
 
 # Email
-DEFAULT_FROM_EMAIL = "no-reply@rolt.com"
+DEFAULT_FROM_EMAIL = "no-reply@rolt.cloud"
 
-SUPPORT_ALERT_EMAIL = "support@rolt.com"
+SUPPORT_ALERT_EMAIL = "support@rolt.cloud"
 EMAIL_SENDING_FAILURE_TRIGGER = False
 
 # Channels
@@ -469,7 +469,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(env("REDIS_URL", default="redis://redis:6379/0"))],
+            "hosts": [env("REDIS_URL", default="redis://redis:6379/0")],
         },
     },
 }

@@ -14,7 +14,7 @@ from .base import env
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["rolt.com"])
+ALLOWED_HOSTS = ["www.rolt.cloud"]
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -110,10 +110,13 @@ MEDIA_URL = f"https://{aws_s3_domain}/media/"
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
-DEFAULT_FROM_EMAIL = env(
-    "DJANGO_DEFAULT_FROM_EMAIL",
-    default="rolt <noreply@rolt.com>",
-)
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
+SUPPORT_ALERT_EMAIL = env("SUPPORT_ALERT_EMAIL")
 # https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
@@ -135,13 +138,6 @@ INSTALLED_APPS += ["anymail"]
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 # https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
 # https://anymail.readthedocs.io/en/stable/esps/mailgun/
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-ANYMAIL = {
-    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
-    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
-    "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
-}
-
 
 # LOGGING
 # ------------------------------------------------------------------------------
@@ -183,11 +179,14 @@ LOGGING = {
 # -------------------------------------------------------------------------------
 # Tools that generate code samples can use SERVERS to point to the correct domain
 SPECTACULAR_SETTINGS["SERVERS"] = [
-    {"url": "https://rolt.com", "description": "Production server"},
+    {
+        "url": "https://www.rolt.cloud",
+        "description": "Production server",
+    },
 ]
 # Your stuff...
 # ------------------------------------------------------------------------------
-DOMAIN = "rolt.com"
+DOMAIN = "www.rolt.cloud"
 SITE_NAME = "Rolt"
 
 
@@ -196,8 +195,14 @@ SITE_NAME = "Rolt"
 DJOSER = {
     **BASE_DJOSER,
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": [
-        f"http://{DOMAIN}/auth/o/google-oauth2/",
+        f"https://{DOMAIN}/auth/o/google-oauth2/",
     ],
 }
 
 LOGIN_REDIRECT_URL = f"https://{DOMAIN}/about"
+
+VNPAY_RETURN_URL = env.str("VNPAY_RETURN_URL")
+VNPAY_PAYMENT_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+VNPAY_API_URL = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"
+VNPAY_TMN_CODE = env.str("VNPAY_TMN_CODE")
+VNPAY_HASH_SECRET_KEY = env.str("VNPAY_HASH_SECRET_KEY")
