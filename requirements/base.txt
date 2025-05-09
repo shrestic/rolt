@@ -12,6 +12,8 @@ uvicorn-worker==0.3.0  # https://github.com/Kludex/uvicorn-worker
 sqlalchemy==2.0.40
 channels==4.2.2
 channels-redis==4.2.1
+Faker==37.1.0
+psycopg-binary==3.2.7
 # Django
 # ------------------------------------------------------------------------------
 django==5.1.8  # pyup: < 5.1  # https://www.djangoproject.com/

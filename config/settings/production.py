@@ -1,11 +1,5 @@
 # ruff: noqa: E501
-import logging
-
-import sentry_sdk
-from sentry_sdk.integrations.celery import CeleryIntegration
-from sentry_sdk.integrations.django import DjangoIntegration
-from sentry_sdk.integrations.logging import LoggingIntegration
-from sentry_sdk.integrations.redis import RedisIntegration
+import dj_database_url
 
 from .base import *  # noqa: F403
 from .base import BASE_DJOSER
@@ -20,11 +14,8 @@ from .base import env
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env("DJANGO_SECRET_KEY")
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["rolt.com"])
+ALLOWED_HOSTS = ["www.rolt.cloud"]
 
-# DATABASES
-# ------------------------------------------------------------------------------
-DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -71,7 +62,10 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
     "DJANGO_SECURE_CONTENT_TYPE_NOSNIFF",
     default=True,
 )
-
+# DATABASES
+# ------------------------------------------------------------------------------
+DATABASES["default"] = dj_database_url.config(conn_max_age=0)
+DISABLE_SERVER_SIDE_CURSORS = True
 
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
 AWS_ACCESS_KEY_ID = env("DJANGO_AWS_ACCESS_KEY_ID")
@@ -116,12 +110,14 @@ MEDIA_URL = f"https://{aws_s3_domain}/media/"
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
-DEFAULT_FROM_EMAIL = env(
-    "DJANGO_DEFAULT_FROM_EMAIL",
-    default="rolt <noreply@rolt.com>",
-)
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.sendgrid.net"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "apikey"
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 # https://docs.djangoproject.com/en/dev/ref/settings/#server-email
-SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)
+SERVER_EMAIL = env("DJANGO_SERVER_EMAIL")
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
 EMAIL_SUBJECT_PREFIX = env(
     "DJANGO_EMAIL_SUBJECT_PREFIX",
@@ -141,13 +137,6 @@ INSTALLED_APPS += ["anymail"]
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 # https://anymail.readthedocs.io/en/stable/installation/#anymail-settings-reference
 # https://anymail.readthedocs.io/en/stable/esps/mailgun/
-EMAIL_BACKEND = "anymail.backends.mailgun.EmailBackend"
-ANYMAIL = {
-    "MAILGUN_API_KEY": env("MAILGUN_API_KEY"),
-    "MAILGUN_SENDER_DOMAIN": env("MAILGUN_DOMAIN"),
-    "MAILGUN_API_URL": env("MAILGUN_API_URL", default="https://api.mailgun.net/v3"),
-}
-
 
 # LOGGING
 # ------------------------------------------------------------------------------
@@ -177,8 +166,6 @@ LOGGING = {
             "handlers": ["console"],
             "propagate": False,
         },
-        # Errors logged by the SDK itself
-        "sentry_sdk": {"level": "ERROR", "handlers": ["console"], "propagate": False},
         "django.security.DisallowedHost": {
             "level": "ERROR",
             "handlers": ["console"],
@@ -187,37 +174,18 @@ LOGGING = {
     },
 }
 
-# Sentry
-# ------------------------------------------------------------------------------
-SENTRY_DSN = env("SENTRY_DSN")
-SENTRY_LOG_LEVEL = env.int("DJANGO_SENTRY_LOG_LEVEL", logging.INFO)
-
-sentry_logging = LoggingIntegration(
-    level=SENTRY_LOG_LEVEL,  # Capture info and above as breadcrumbs
-    event_level=logging.ERROR,  # Send errors as events
-)
-integrations = [
-    sentry_logging,
-    DjangoIntegration(),
-    CeleryIntegration(),
-    RedisIntegration(),
-]
-sentry_sdk.init(
-    dsn=SENTRY_DSN,
-    integrations=integrations,
-    environment=env("SENTRY_ENVIRONMENT", default="production"),
-    traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=0.0),
-)
-
 # django-rest-framework
 # -------------------------------------------------------------------------------
 # Tools that generate code samples can use SERVERS to point to the correct domain
 SPECTACULAR_SETTINGS["SERVERS"] = [
-    {"url": "https://rolt.com", "description": "Production server"},
+    {
+        "url": "https://www.rolt.cloud",
+        "description": "Production server",
+    },
 ]
 # Your stuff...
 # ------------------------------------------------------------------------------
-DOMAIN = "rolt.com"
+DOMAIN = "www.rolt.cloud"
 SITE_NAME = "Rolt"
 
 
@@ -226,8 +194,14 @@ SITE_NAME = "Rolt"
 DJOSER = {
     **BASE_DJOSER,
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": [
-        f"http://{DOMAIN}/auth/o/google-oauth2/",
+        f"https://{DOMAIN}/auth/o/google-oauth2/",
     ],
 }
 
 LOGIN_REDIRECT_URL = f"https://{DOMAIN}/about"
+
+VNPAY_RETURN_URL = env.str("VNPAY_RETURN_URL")
+VNPAY_PAYMENT_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+VNPAY_API_URL = "https://sandbox.vnpayment.vn/merchant_webapi/api/transaction"
+VNPAY_TMN_CODE = env.str("VNPAY_TMN_CODE")
+VNPAY_HASH_SECRET_KEY = env.str("VNPAY_HASH_SECRET_KEY")
