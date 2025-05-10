@@ -104,18 +104,18 @@ python merge_production_dotenvs_in_dotenv.py
 
 ### 2. Set Config on Heroku
 
-Check the `.example.env` file for all required environment variables.  
+Check the `.example.env` file for all required environment variables.
 You can copy it or use it as a reference when setting Heroku config variables.
 
 
 ### 3. VNPAY Integration
-To get started, you need a test account.  
+To get started, you need a test account.
 Search **"VNPAY đăng ký tài khoản sandbox"** on Google to find the official sandbox registration page.
 - VNPAY is running in **sandbox mode** but enabled in production for now.
 - Mock frontend using [Ngrok](https://ngrok.com/) to allow callback testing.
 - Real production access requires official registration with VNPAY.
 - For proper IPN (Instant Payment Notification) setup, refer to the VNPAY setup guide.
-- After setting up the account, visit the following link to configure your IPN URL:  
+- After setting up the account, visit the following link to configure your IPN URL:
 👉 https://sandbox.vnpayment.vn/merchantv2/Users/Login.htm?ReturnUrl=%2fmerchantv2%2fAccount%2fTerminalEdit.htm
 
 
