@@ -84,16 +84,19 @@ CELERY_TASK_EAGER_PROPAGATES = True
 # ------------------------------------------------------------------------------
 DOMAIN = "localhost:8000"
 SITE_NAME = "Rolt (Dev)"
-
+TEMP_DOMAIN = env.str("TEMP_DOMAIN")
 # DJOSER
 # ------------------------------------------------------------------------------
 DJOSER = {
     **BASE_DJOSER,
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": [
-        f"http://{DOMAIN}/auth/o/google-oauth2/",
+        f"https://{DOMAIN}/auth/o/google-oauth2/",
+        f"https://{TEMP_DOMAIN}/callback/",
     ],
+    "SOCIAL_AUTH_REDIRECT_IS_HTTPS": True,
 }
 
+LOGIN_REDIRECT_URL = f"https://{DOMAIN}/about"
 
 LOGIN_REDIRECT_URL = f"http://{DOMAIN}/about"
 VNPAY_RETURN_URL = env.str("VNPAY_RETURN_URL")

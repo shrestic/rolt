@@ -187,7 +187,7 @@ SPECTACULAR_SETTINGS["SERVERS"] = [
 # ------------------------------------------------------------------------------
 DOMAIN = "www.rolt.cloud"
 SITE_NAME = "Rolt"
-
+TEMP_DOMAIN = env.str("TEMP_DOMAIN")
 
 # DJOSER
 # ------------------------------------------------------------------------------
@@ -195,7 +195,9 @@ DJOSER = {
     **BASE_DJOSER,
     "SOCIAL_AUTH_ALLOWED_REDIRECT_URIS": [
         f"https://{DOMAIN}/auth/o/google-oauth2/",
+        f"https://{TEMP_DOMAIN}/callback/",
     ],
+    "SOCIAL_AUTH_REDIRECT_IS_HTTPS": True,
 }
 
 LOGIN_REDIRECT_URL = f"https://{DOMAIN}/about"
