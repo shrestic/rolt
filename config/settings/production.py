@@ -66,7 +66,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
 )
 # DATABASES
 # ------------------------------------------------------------------------------
-DATABASES["default"] = dj_database_url.config(conn_max_age=600)
+DATABASES["default"] = dj_database_url.config(conn_max_age=0)
 DISABLE_SERVER_SIDE_CURSORS = True
 
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
