@@ -1,25 +1,21 @@
 # General
-# ------------------------------------------------------------------------------
 USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
-# Redis
-# ------------------------------------------------------------------------------
-REDIS_URL=redis://redis:6379/0
 
-# Celery
-# ------------------------------------------------------------------------------
+# Redis
+REDIS_URL=redis://redis:6379/0
 
 # Flower
 CELERY_FLOWER_USER=debug
 CELERY_FLOWER_PASSWORD=debug
 
-#Payment
-VNPAY_TMN_CODE=7ZRJTRMX
-VNPAY_HASH_SECRET_KEY=0T7RRHVLRR9Z4BQSACJVT3MNAGAJY1EF
-# Used by the frontend to show payment status; not for backend database updates
-# But for now , we are using the same URL for both
-VNPAY_RETURN_URL=https://7607-14-191-121-112.ngrok-free.app/shop/payment/return/
-TEMP_DOMAIN=7607-14-191-121-112.ngrok-free.app
+# Payment
+VNPAY_TMN_CODE=ABC123XYZ
+VNPAY_HASH_SECRET_KEY=1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P
+VNPAY_RETURN_URL=https://test-1234abcd.ngrok-free.app/shop/payment/return/
+TEMP_DOMAIN=test-1234abcd.ngrok-free.app
 
-DEFAULT_FROM_EMAIL=no-reply@rolt.com
-SUPPORT_ALERT_EMAIL=support@rolt.com
+
+# Email
+DEFAULT_FROM_EMAIL=no-reply@example.com
+SUPPORT_ALERT_EMAIL=support@example.com
