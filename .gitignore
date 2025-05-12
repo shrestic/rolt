@@ -276,3 +276,33 @@ rolt/media/
 .env
 .envs/*
 !.envs/.local/
+
+#terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+
+# Exclude override files as they are usually local and not shared
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore variable definition files that may contain secrets
+*.tfvars
+*.tfvars.json
+*.auto.tfvars
+
+# Terraform plan files
+*.plan
+
+# Backup files
+*.backup
+
+# Sensitive or system-specific files
+.terraform.lock.hcl

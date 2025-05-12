@@ -7,7 +7,7 @@ services:
   django: &django
     build:
       context: .
-      dockerfile: ./compose/local/django/Dockerfile
+      dockerfile: ./compose/production/django/Dockerfile
     image: rolt_local_django
     container_name: rolt_local_django
     depends_on:
@@ -16,12 +16,23 @@ services:
       - mailpit
     volumes:
       - .:/app:z
-    env_file:
-      - ./.envs/.local/.django
-      - ./.envs/.local/.postgres
+    env_file: .env
     ports:
       - '8000:8000'
+      - '5050:5050'
     command: /start
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/production/nginx/Dockerfile
+    image: rolt_local_nginx
+    container_name: rolt_local_nginx
+    depends_on:
+      - django
+    ports:
+      - "80:80"
+    restart: always
 
   postgres:
     build:
@@ -32,8 +43,7 @@ services:
     volumes:
       - rolt_local_postgres_data:/var/lib/postgresql/data
       - rolt_local_postgres_data_backups:/backups
-    env_file:
-      - ./.envs/.local/.postgres
+    env_file: .env
     ports:
       - "5432:5432"
 
@@ -49,7 +59,6 @@ services:
 
     volumes:
       - rolt_local_redis_data:/data
-
 
   celeryworker:
     <<: *django

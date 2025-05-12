@@ -4,5 +4,8 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+echo "Waiting for Django to complete migrations..."
+sleep 20
+echo "Starting Celery Beat"
 
 exec celery -A config.celery_app beat -l INFO
