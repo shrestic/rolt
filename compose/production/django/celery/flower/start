@@ -3,14 +3,18 @@
 set -o errexit
 set -o nounset
 
-
-
-until timeout 10 celery -A config.celery_app inspect ping; do
-    >&2 echo "Celery workers not available"
+# Wait for Celery workers to be available (max 6 attempts, 60s total)
+for i in {1..6}; do
+    if celery -A config.celery_app inspect ping > /dev/null 2>&1; then
+        echo "Celery workers are available"
+        break
+    else
+        echo "Waiting for Celery workers... attempt ${i}/6"
+        sleep 10
+    fi
 done
 
-echo 'Starting flower'
-
+echo "Starting Flower"
 
 exec celery \
     -A config.celery_app \
