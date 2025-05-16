@@ -36,7 +36,6 @@
       { "name": "DJANGO_DEBUG", "value": "${django_debug}" },
       { "name": "DJANGO_EMAIL_BACKEND", "value": "django.core.mail.backends.smtp.EmailBackend" },
       { "name": "DJANGO_EMAIL_SUBJECT_PREFIX", "value": "[rolt]" },
-      { "name": "DJANGO_READ_DOT_ENV_FILE", "value": "False" },
       { "name": "DJANGO_SECRET_KEY", "value": "${django_secret_key}" },
       { "name": "DJANGO_SECURE_CONTENT_TYPE_NOSNIFF", "value": "True" },
       { "name": "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", "value": "True" },

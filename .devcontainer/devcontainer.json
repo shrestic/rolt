@@ -1,7 +1,7 @@
 {
     "name": "rolt_dev",
     "dockerComposeFile": [
-        "../docker-compose.yml"
+        "../docker-compose.local.yml"
     ],
     "init": true,
     "mounts": [
