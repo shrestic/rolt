@@ -7,18 +7,18 @@
     "mounts": [
         {
             "source": "./.devcontainer/bash_history",
-            "target": "/home/dev-user/.bash_history",
+            "target": "/home/django/.bash_history",
             "type": "bind"
         },
         {
             "source": "~/.ssh",
-            "target": "/home/dev-user/.ssh",
+            "target": "/home/django/.ssh",
             "type": "bind"
         }
     ],
     "overrideCommand": false,
     "service": "django",
-    "remoteUser": "dev-user",
+    "remoteUser": "django",
     "workspaceFolder": "/app",
     "customizations": {
         "vscode": {
