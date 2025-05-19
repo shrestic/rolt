@@ -92,21 +92,96 @@ Example:
 
 ---
 
-## 🚀 Deployment (Heroku)
+## 🚀 Deployment Options
 
-### 1. Merge Env Files
+This project supports two primary deployment methods:
 
-Run script to merge production `.env` values:
+### ✅ Option 1: Quick Deployment via Heroku
+
+#### Step 1: Merge Production `.env` Files
+
+Use the following script to merge all required `.env` variables into one file:
 
 ```bash
 python merge_production_dotenvs_in_dotenv.py
 ```
 
-### 2. Set Config on Heroku
+This will create a unified `.env` file for production use.
 
-Check the `.example.env` file for all required environment variables.
-You can copy it or use it as a reference when setting Heroku config variables.
+---
 
+#### Step 2: Set Config Vars on Heroku
+
+Check the `.example.env` file to view all required environment variables. You can:
+
+* Set them manually via Heroku Dashboard, or
+* Use the [Heroku Config CLI Plugin](https://github.com/xavdid/heroku-config) for bulk upload.
+
+---
+
+#### Step 3: VNPAY Integration (Optional)
+
+If you're using VNPAY for payments:
+
+* The integration runs in **sandbox mode** but is **production-ready**.
+* Register a sandbox account at the official site by searching:
+  👉 **"VNPAY đăng ký tài khoản sandbox"**
+* Use [Ngrok](https://ngrok.com/) to test IPN callbacks locally.
+* Configure the IPN URL after login here:
+  👉 [https://sandbox.vnpayment.vn/merchantv2/Users/Login.htm?ReturnUrl=%2fmerchantv2%2fAccount%2fTerminalEdit.htm](https://sandbox.vnpayment.vn/merchantv2/Users/Login.htm?ReturnUrl=%2fmerchantv2%2fAccount%2fTerminalEdit.htm)
+* Real production integration requires official merchant approval from VNPAY.
+
+---
+
+### 🧱 Option 2: Production Deployment via AWS & Terraform
+
+This project includes full Infrastructure as Code (IaC) support using **Terraform** to provision and deploy on AWS.
+
+#### 🔧 Infrastructure Components:
+
+* **ECS Fargate** for container orchestration
+* **ALB (Application Load Balancer)** for traffic routing
+* **RDS (PostgreSQL)** for managed relational database
+* **Elasticache (Redis)** for caching and Celery task queues
+* **S3** for static/media file storage
+* **CloudWatch Logs** for centralized log management
+* **VPC with public/private subnets** for secure networking
+* **Terraform** for provisioning
+* **GitHub Actions** for CI/CD deployment automation
+
+#### 🧩 Terraform Setup
+
+1. Create your Terraform secrets in `terraform.tfvars` or use environment variables:
+
+```hcl
+region               = "ap-southeast-1"
+aws_access_key_id    = "..."
+aws_secret_access_key = "..."
+rds_password         = "..."
+django_secret_key    = "..."
+vnpay_hash_secret_key = "..."
+```
+
+2. Initialize Terraform:
+
+```bash
+cd terraform/
+terraform init
+```
+
+3. Validate and apply infrastructure:
+
+```bash
+terraform plan -out=tfplan
+terraform apply tfplan
+```
+
+> You can customize environment variables and image URLs in `variables.tf`.
+
+---
+
+ROLT AWS Architecture Diagram
+![ROLT AWS Architecture Diagram](https://github.com/user-attachments/assets/bf180a8c-f18a-488e-9351-55f7aaff5b5a)
 
 ### 3. VNPAY Integration
 To get started, you need a test account.
