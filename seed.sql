@@ -1,5 +1,5 @@
 -- Reset the tables to avoid conflicts (optional, run only if you want to clear existing data)
-TRUNCATE TABLE manufacturer, kit, switch, keycap, accessory, service RESTART IDENTITY CASCADE;
+TRUNCATE TABLE manufacturer, kit, switch, keycap,artisan_keycap,accessory, service RESTART IDENTITY CASCADE;
 
 -- Insert manufacturers first (including keycap manufacturers)
 -- This ensures foreign key constraints won't be violated
@@ -73,6 +73,22 @@ INSERT INTO keycap (
 ('2025-04-22 04:15:00-07', '2025-04-22 04:15:00-07', gen_random_uuid(), 'KBDFANS_PBT', 'KBDFans PBT Minimal', 'A minimalist PBT keycap set with a white and grey colorway, featuring dye-sub legends for a clean and thocky typing experience.', 'PBT', 'Cherry', 'Dye-sub', false, 'Cherry, Gateron', 132, 'ANSI, ISO', 'White/Grey', 'Minimalist', 1.4, 'Textured', 'Thocky', NULL, 1749750, 8),
 ('2025-04-22 04:16:00-07', '2025-04-22 04:16:00-07', gen_random_uuid(), 'GLORIOUS_AURA', 'Glorious Aura V2', 'A transparent polycarbonate keycap set with a clear and black colorway, featuring doubleshot legends for a vibrant and clacky typing experience.', 'Polycarbonate', 'OEM', 'Doubleshot', true, 'Cherry, Gateron', 138, 'ANSI, ISO', 'Clear/Black', 'Transparent', 1.6, 'Smooth', 'Clacky', NULL, 2249750, 9),
 ('2025-04-22 04:17:00-07', '2025-04-22 04:17:00-07', gen_random_uuid(), 'VARMILO_SAKURA', 'Varmilo Sakura', 'A PBT keycap set with a white and pink sakura theme, featuring dye-sub legends for a textured and elegant typing experience.', 'PBT', 'Cherry', 'Dye-sub', true, 'Cherry, Gateron', 135, 'ANSI, ISO', 'White/Pink', 'Sakura', 1.4, 'Textured', 'Thocky', NULL, 2499750, 10);
+
+-- Inserting data into artisan_keycap table with VND prices
+INSERT INTO artisan_keycap (
+    created_at, updated_at, id, code, name, artist_name, profile, colorway,
+    image, description, price, limited_quantity
+) VALUES
+('2025-05-24 07:00:00-07', '2025-05-24 07:00:00-07', gen_random_uuid(), 'KPR_ECLIPSE', 'Eclipse Moon', 'Keypora', 'SA', 'Silver/Black', NULL, 'Dark-themed artisan inspired by lunar eclipse.', 749000, 50),
+('2025-05-24 07:01:00-07', '2025-05-24 07:01:00-07', gen_random_uuid(), 'DWF_DRAGON', 'Serika Dragon', 'Dwarf Factory', 'Cherry', 'Gold/Red', NULL, 'Dragon-themed sculpt inspired by Eastern mythology.', 1099000, 35),
+('2025-05-24 07:02:00-07', '2025-05-24 07:02:00-07', gen_random_uuid(), 'AKU_SAKURA', 'Sakura Blossom', 'ArtKey Universe', 'OEM', 'Pink/White', NULL, 'Soft pastel artisan resembling cherry blossoms.', 890000, 70),
+('2025-05-24 07:03:00-07', '2025-05-24 07:03:00-07', gen_random_uuid(), 'SUK_NEON', 'Neon City', 'Suited Up Keycaps', 'DSA', 'Blue/Purple', NULL, 'Cyberpunk styled artisan with glow-in-the-dark resin.', 990000, 40),
+('2025-05-24 07:04:00-07', '2025-05-24 07:04:00-07', gen_random_uuid(), 'MNK_GEISHA', 'Geisha Red', 'Monokei', 'SA', 'Red/Black', NULL, 'Traditional Japanese Geisha in bold red outfit.', 1190000, 25),
+('2025-05-24 07:05:00-07', '2025-05-24 07:05:00-07', gen_random_uuid(), 'APK_KITSUNE', 'Kitsune Spirit', 'Alpha Keycaps', 'Cherry', 'White/Orange', NULL, 'Fox spirit inspired sculpt with tribal markings.', 1250000, 30),
+('2025-05-24 07:06:00-07', '2025-05-24 07:06:00-07', gen_random_uuid(), 'KRT_CLOUD', 'Cloud Nine', 'Keyreative', 'KAT', 'White/Blue', NULL, 'Fluffy cloud design with gradient blue swirls.', 720000, 60),
+('2025-05-24 07:07:00-07', '2025-05-24 07:07:00-07', gen_random_uuid(), 'CMS_RUNES', 'Forest Runes', 'Capsmiths', 'OEM', 'Green/Brown', NULL, 'Mystical rune carvings on forest wood resin.', 880000, 45),
+('2025-05-24 07:08:00-07', '2025-05-24 07:08:00-07', gen_random_uuid(), 'ZNS_TIGER', 'Cyber Tiger', 'Zion Studios', 'DSA', 'Black/Yellow', NULL, 'Tiger face with cybernetic implants.', 1349000, 20),
+('2025-05-24 07:09:00-07', '2025-05-24 07:09:00-07', gen_random_uuid(), 'TMT_UNDERSEA', 'Undersea Orb', 'TinyMakesThings', 'Cherry', 'Blue/Teal', NULL, 'Miniature coral reef encased in epoxy resin.', 1025000, 25);
 
 -- Inserting data into accessory table with VND prices
 INSERT INTO accessory (

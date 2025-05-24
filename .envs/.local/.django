@@ -12,8 +12,8 @@ CELERY_FLOWER_PASSWORD=debug
 # Payment
 VNPAY_TMN_CODE=ABC123XYZ
 VNPAY_HASH_SECRET_KEY=1A2B3C4D5E6F7G8H9I0J1K2L3M4N5O6P
-VNPAY_RETURN_URL=https://test-1234abcd.ngrok-free.app/shop/payment/return/
-TEMP_DOMAIN=test-1234abcd.ngrok-free.app
+VNPAY_RETURN_URL=https://6786-14-191-120-156.ngrok-free.appshop/payment/return/
+TEMP_DOMAIN=6786-14-191-120-156.ngrok-free.app
 
 
 # Email

@@ -206,4 +206,3 @@ pre-commit run --all-files
 
 For questions or support:
 📧 **[support@rolt.com](mailto:support@rolt.com)**
-

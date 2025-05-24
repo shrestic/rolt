@@ -3,6 +3,7 @@ import logging
 from django.db.models import F
 
 from rolt.inventory.models import AccessoryInventory
+from rolt.inventory.models import ArtisanKeycapInventory
 from rolt.inventory.models import KeycapInventory
 from rolt.inventory.models import KitInventory
 from rolt.inventory.models import SwitchInventory
@@ -28,11 +29,11 @@ def _update_inventory(product, quantity_change: int):
     # Map product model names to their inventory models
     inventory_map = {
         "keycap": KeycapInventory,
+        "artisankeycap": ArtisanKeycapInventory,
         "kit": KitInventory,
         "switch": SwitchInventory,
         "accessory": AccessoryInventory,
     }
-
     # Get the model name (e.g., 'keycap', 'kit')
     model_name = product.__class__.__name__.lower()
 

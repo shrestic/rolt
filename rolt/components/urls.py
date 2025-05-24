@@ -1,6 +1,12 @@
 from django.urls import include
 from django.urls import path
 
+from rolt.components.apis.artisan_keycap_apis import ArtisanKeycapBulkCreateApi
+from rolt.components.apis.artisan_keycap_apis import ArtisanKeycapCreateApi
+from rolt.components.apis.artisan_keycap_apis import ArtisanKeycapDeleteApi
+from rolt.components.apis.artisan_keycap_apis import ArtisanKeycapDetailApi
+from rolt.components.apis.artisan_keycap_apis import ArtisanKeycapListApi
+from rolt.components.apis.artisan_keycap_apis import ArtisanKeycapUpdateApi
 from rolt.components.apis.keycap_apis import KeycapBulkCreateApi
 from rolt.components.apis.keycap_apis import KeycapCreateApi
 from rolt.components.apis.keycap_apis import KeycapDeleteApi
@@ -61,8 +67,31 @@ keycap_patterns = [
 ]
 
 
+artisan_keycap_patterns = [
+    path("", ArtisanKeycapListApi.as_view(), name="artisan-keycap-list"),
+    path("create/", ArtisanKeycapCreateApi.as_view(), name="artisan-keycap-create"),
+    path(
+        "bulk-create/",
+        ArtisanKeycapBulkCreateApi.as_view(),
+        name="artisan-keycap-bulk-create",
+    ),
+    path("<str:code>/", ArtisanKeycapDetailApi.as_view(), name="artisan-keycap-detail"),
+    path(
+        "<str:code>/update/",
+        ArtisanKeycapUpdateApi.as_view(),
+        name="artisan-keycap-update",
+    ),
+    path(
+        "<str:code>/delete/",
+        ArtisanKeycapDeleteApi.as_view(),
+        name="artisan-keycap-delete",
+    ),
+]
+
+
 urlpatterns = [
     path("kits/", include(kit_patterns), name="kits"),
     path("switches/", include(switch_patterns), name="switches"),
     path("keycaps/", include(keycap_patterns), name="keycaps"),
+    path("artisan-keycaps/", include(artisan_keycap_patterns), name="artisan-keycaps"),
 ]
