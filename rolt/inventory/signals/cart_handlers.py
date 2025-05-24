@@ -8,6 +8,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
 from rolt.inventory.models import AccessoryInventory
+from rolt.inventory.models import ArtisanKeycapInventory
 from rolt.inventory.models import KeycapInventory
 from rolt.inventory.models import KitInventory
 from rolt.inventory.models import SwitchInventory
@@ -68,6 +69,7 @@ def lock_inventory(product):
     # Map product model names to their inventory models
     inventory_map = {
         "keycap": KeycapInventory,
+        "artisankeycap": ArtisanKeycapInventory,
         "kit": KitInventory,
         "switch": SwitchInventory,
         "accessory": AccessoryInventory,
