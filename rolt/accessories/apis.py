@@ -33,13 +33,13 @@ class AccessoryListApi(APIView):
         name = serializers.CharField(required=False)
         type = serializers.CharField(required=False)
         price_min = serializers.DecimalField(
-            max_digits=10,
-            decimal_places=2,
+            max_digits=14,
+            decimal_places=0,
             required=False,
         )
         price_max = serializers.DecimalField(
-            max_digits=10,
-            decimal_places=2,
+            max_digits=14,
+            decimal_places=0,
             required=False,
         )
 

@@ -56,14 +56,14 @@ class KitListApi(APIView):
         knob = serializers.BooleanField(required=False, allow_null=True)
         price_min = serializers.DecimalField(
             required=False,
-            max_digits=10,
-            decimal_places=2,
+            max_digits=14,
+            decimal_places=0,
             allow_null=True,
         )
         price_max = serializers.DecimalField(
             required=False,
-            max_digits=10,
-            decimal_places=2,
+            max_digits=14,
+            decimal_places=0,
             allow_null=True,
         )
 

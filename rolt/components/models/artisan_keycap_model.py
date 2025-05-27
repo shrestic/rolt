@@ -22,7 +22,7 @@ class ArtisanKeycap(BaseModel):
         validators=[validate_file_size],
     )
     description = models.TextField(blank=True, default="")
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=14, decimal_places=0)
 
     limited_quantity = models.PositiveIntegerField()
 

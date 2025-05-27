@@ -53,8 +53,8 @@ class PaymentTransaction(BaseModel):
 
     # Payment amount in VND
     amount = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
+        max_digits=14,
+        decimal_places=0,
         help_text="Order amount (VND)",
     )
 

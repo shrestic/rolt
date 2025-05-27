@@ -49,6 +49,10 @@ class BuildAdmin(admin.ModelAdmin):
             return False
         return super().has_delete_permission(request, obj)
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.filter(is_preset=True)
+
 
 @admin.register(Service)
 class ServiceAdmin(admin.ModelAdmin):
