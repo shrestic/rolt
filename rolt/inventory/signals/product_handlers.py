@@ -152,7 +152,7 @@ def create_inventory(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Accessory)
 @receiver(post_delete, sender=Keycap)
-@receiver(post_save, sender=ArtisanKeycap)
+@receiver(post_delete, sender=ArtisanKeycap)
 @receiver(post_delete, sender=Kit)
 @receiver(post_delete, sender=Switch)
 def delete_inventory(sender, instance, **kwargs):

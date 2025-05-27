@@ -5,7 +5,6 @@ from datetime import datetime
 from django.conf import settings
 from django.db import transaction
 
-from rolt.inventory.signals.payment_handlers import process_payment_inventory_change
 from rolt.shop.models.order_model import Order
 from rolt.shop.models.payment_transaction_model import PaymentTransaction
 from rolt.shop.utils import generate_secure_hash
@@ -53,8 +52,6 @@ def _generate_payment_transaction_err_msg(*, response_code: str):
 
 
 def payment_transaction_update(*, data: dict, payment_transaction: PaymentTransaction):
-    old_status = payment_transaction.status
-
     if data["response_code"] == "00":
         with transaction.atomic():
             payment_transaction.status = PaymentTransaction.StatusChoices.SUCCESS
@@ -71,10 +68,6 @@ def payment_transaction_update(*, data: dict, payment_transaction: PaymentTransa
                     "message",
                 ],
             )
-            process_payment_inventory_change(
-                payment_transaction=payment_transaction,
-                old_status=old_status,
-            )
             order = payment_transaction.order
             order.status = Order.StatusChoices.PAID
             order.save(update_fields=["status"])
@@ -87,10 +80,6 @@ def payment_transaction_update(*, data: dict, payment_transaction: PaymentTransa
             payment_transaction.message = error_msg
             payment_transaction.status = PaymentTransaction.StatusChoices.FAILED
             payment_transaction.save(update_fields=["status", "message"])
-            process_payment_inventory_change(
-                payment_transaction=payment_transaction,
-                old_status=old_status,
-            )
 
         raise ValueError(error_msg)
 
