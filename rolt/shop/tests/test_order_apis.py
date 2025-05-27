@@ -3,7 +3,9 @@ from django.contrib.contenttypes.models import ContentType
 from model_bakery import baker
 from rest_framework import status
 
+from rolt.components.models.kit_model import Kit
 from rolt.components.models.switch_model import Switch
+from rolt.inventory.models import KitInventory
 from rolt.inventory.models import SwitchInventory
 from rolt.shop.models.cart_model import CartItem
 from rolt.shop.models.order_model import Order
@@ -51,7 +53,20 @@ class TestOrderApi:
         api_client.force_authenticate(user=user)
 
         order = baker.make(Order, customer=customer)
-        baker.make(OrderItem, order=order)
+
+        kit = baker.make(Kit)
+        KitInventory.objects.filter(kit=kit).delete()
+        baker.make(KitInventory, kit=kit, quantity=10)
+        ct = ContentType.objects.get_for_model(kit)
+
+        baker.make(
+            OrderItem,
+            order=order,
+            content_type=ct,
+            object_id=kit.id,
+            name_snapshot=kit.name,
+            price_snapshot=kit.price,
+        )
 
         response = api_client.get("/shop/order/")
         assert response.status_code == status.HTTP_200_OK
@@ -68,7 +83,21 @@ class TestOrderApi:
         api_client.force_authenticate(user=user)
 
         order = baker.make(Order, customer=customer)
-        item = baker.make(OrderItem, order=order)  # noqa: F841
+
+        kit = baker.make(Kit)
+        ct = ContentType.objects.get_for_model(kit)
+        KitInventory.objects.filter(kit=kit).delete()
+        baker.make(KitInventory, kit=kit, quantity=10)
+
+        baker.make(
+            OrderItem,
+            order=order,
+            content_type=ct,
+            object_id=kit.id,
+            name_snapshot=kit.name,
+            price_snapshot=kit.price,
+            quantity=1,
+        )
 
         response = api_client.get(f"/shop/order/{order.id}/")
         assert response.status_code == status.HTTP_200_OK

@@ -84,7 +84,7 @@
             <strong>Status:</strong> {{ status }}
           </p>
           <p>
-            <strong>Total Amount:</strong> ${{ total_amount }}
+            <strong>Total Amount:</strong> {{ total_amount }}
           </p>
           <p>
             <strong>Reason:</strong> Please contact support for more details.
@@ -107,7 +107,7 @@
                   evo
                   <td>{{ item.content_type.model }}</td>
                   <td>{{ item.quantity }}</td>
-                  <td>${{ item.price_snapshot }}</td>
+                  <td>{{ item.display_price }}</td>
                 </tr>
               {% endfor %}
             </tbody>

@@ -94,7 +94,7 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
         "order",
         "method",
         "status",
-        "amount",
+        "total_price",
         "paid_at",
         "created_at",
     )
@@ -105,7 +105,7 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
         "order",
         "method",
         "status",
-        "amount",
+        "total_price",
         "bank_code",
         "transaction_no",
         "message",
@@ -114,6 +114,10 @@ class PaymentTransactionAdmin(admin.ModelAdmin):
         "updated_at",
     )
     list_select_related = ("order",)
+
+    @admin.display(description="Total Price (VND)")
+    def total_price(self, obj):
+        return f"{int(obj.amount):,}".replace(",", ".")
 
     def has_add_permission(self, request):
         return request.user.is_superuser

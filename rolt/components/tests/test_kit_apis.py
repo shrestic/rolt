@@ -178,7 +178,7 @@ class TestKitApis:
         response = api_client.get("/components/kits/?price_min=150&price_max=250")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data["results"]) == 1
-        assert response.data["results"][0]["price"] == "200.00"
+        assert response.data["results"][0]["price"] == "200"
 
     def test_filter_kits_by_layout_and_connectivity_return_200(self, api_client):
         baker.make(Kit, layout="TKL", connectivity="Wired")

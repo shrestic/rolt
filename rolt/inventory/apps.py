@@ -8,5 +8,5 @@ class InventoryConfig(AppConfig):
     def ready(self):
         # Import signals here to avoid circular imports
         import rolt.inventory.signals.cart_handlers
-        import rolt.inventory.signals.payment_handlers
+        import rolt.inventory.signals.order_handlers
         import rolt.inventory.signals.product_handlers  # noqa: F401
