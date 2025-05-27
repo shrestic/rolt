@@ -43,7 +43,7 @@ class Switch(BaseModel):
         null=True,
         validators=[validate_file_size],
     )
-    price_per_switch = models.DecimalField(max_digits=10, decimal_places=2)
+    price_per_switch = models.DecimalField(max_digits=14, decimal_places=0)
     description = models.TextField(blank=True, default="")
 
     class Meta:

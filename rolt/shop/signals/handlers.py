@@ -16,99 +16,89 @@ from rolt.shop.models.payment_transaction_model import PaymentTransaction
 logger = logging.getLogger(__name__)
 
 
+def format_vnd(amount):
+    return f"{int(amount):,} VND".replace(",", ".")
+
+
 @receiver(post_save, sender=Order)
 def send_order_notification_email(instance, **_):
-    """Send notification email based on the order status."""
     order: Order = instance
+
     try:
-        # Define templates and subjects for each order status
+        if order.status == Order.StatusChoices.PENDING and order.total_amount == 0:
+            logger.debug("Skipping email for zero-amount PENDING order %s", order.id)
+            return
+
         template_map = {
             Order.StatusChoices.PENDING: {
-                "subject": f"[Rolt] Order Confirmation - {order.id}",
+                "subject": f"[Rolt] Order Confirmation #{order.id}",
                 "template": "email/pending_order_notify.html",
                 "plain_text": (
-                    f"Hello {order.customer.full_name},\n\n"
+                    f"Hi {order.customer.full_name},\n\n"
                     f"Thank you for your order!\n"
                     f"Order ID: {order.id}\n"
                     f"Status: {order.get_status_display()}\n"
-                    f"Total: ${order.total_amount}\n"
-                    f"Placed at: {localtime(order.created_at).strftime('%Y-%m-%d %H:%M')}\n\n"  # noqa: E501
+                    f"Total: {format_vnd(order.total_amount)}\n"
+                    f"Placed at: {localtime(order.created_at).strftime('%Y-%m-%d %H:%M')}\n"  # noqa: E501
                 ),
             },
             Order.StatusChoices.PAID: {
-                "subject": f"[Rolt] Payment Confirmation - {order.id}",
+                "subject": f"[Rolt] Payment Successful - Order #{order.id}",
                 "template": "email/paid_order_notify.html",
                 "plain_text": (
-                    f"Hello {order.customer.full_name},\n\n"
-                    f"Your payment has been confirmed!\n"
-                    f"Order ID: {order.id}\n"
-                    f"Status: {order.get_status_display()}\n"
-                    f"Total: ${order.total_amount}\n"
-                    f"Placed at: {localtime(order.created_at).strftime('%Y-%m-%d %H:%M')}\n\n"  # noqa: E501
+                    f"Hi {order.customer.full_name},\n\n"
+                    f"Your payment for Order #{order.id} has been confirmed.\n"
+                    f"Total: {format_vnd(order.total_amount)}\n"
+                    f"Placed at: {localtime(order.created_at).strftime('%Y-%m-%d %H:%M')}\n"  # noqa: E501
                 ),
             },
             Order.StatusChoices.CANCELLED: {
-                "subject": f"[Rolt] Order Cancelled - {order.id}",
+                "subject": f"[Rolt] Order #{order.id} Cancelled",
                 "template": "email/cancelled_order_notify.html",
                 "plain_text": (
-                    f"Hello {order.customer.full_name},\n\n"
-                    f"We're sorry, your order has been cancelled.\n"
-                    f"Order ID: {order.id}\n"
-                    f"Status: {order.get_status_display()}\n"
-                    f"Total: ${order.total_amount}\n"
-                    f"Reason: Contact support for details.\n\n"
+                    f"Hi {order.customer.full_name},\n\n"
+                    f"Your order #{order.id} has been cancelled.\n"
+                    f"Total: {format_vnd(order.total_amount)}\n"
+                    f"If you have questions, please contact support.\n"
                 ),
             },
             Order.StatusChoices.REFUNDED: {
-                "subject": f"[Rolt] Refund Confirmation - {order.id}",
+                "subject": f"[Rolt] Refund Processed - Order #{order.id}",
                 "template": "email/refunded_order_notify.html",
                 "plain_text": (
-                    f"Hello {order.customer.full_name},\n\n"
-                    f"Your refund has been processed.\n"
-                    f"Order ID: {order.id}\n"
-                    f"Status: {order.get_status_display()}\n"
-                    f"Refund Amount: ${order.total_amount}\n"
-                    f"Processed at: {localtime(timezone.now()).strftime('%Y-%m-%d %H:%M')}\n\n"  # noqa: E501
+                    f"Hi {order.customer.full_name},\n\n"
+                    f"Your refund for Order #{order.id} has been processed.\n"
+                    f"Refund Amount: {format_vnd(order.total_amount)}\n"
+                    f"Refunded at: {localtime(timezone.now()).strftime('%Y-%m-%d %H:%M')}\n"  # noqa: E501
                 ),
             },
         }
 
-        # Skip if the order status is not defined in the template map
         if order.status not in template_map:
             logger.debug(
-                "Skipping email for order %s with unsupported status %s",
-                order.id,
+                "No email template for status %s of order %s",
                 order.status,
-                extra={"order_id": order.id, "status": order.status},
-            )
-            return
-
-        # Avoid sending email for PENDING orders if total_amount is not set
-        if order.status == Order.StatusChoices.PENDING and order.total_amount == 0:
-            logger.debug(
-                "Skipping email for PENDING order %s as total_amount is not set",
                 order.id,
-                extra={"order_id": order.id},
             )
             return
 
-        # Fetch OrderItem list with optimized queries
         items = OrderItem.objects.select_related("content_type").filter(order=order)
+        for item in items:
+            item.display_price = format_vnd(item.price_snapshot)
         config = template_map[order.status]
+
         context = {
             "customer_name": order.customer.full_name,
             "order_id": order.id,
             "status": order.get_status_display(),
-            "total_amount": order.total_amount,
+            "total_amount": format_vnd(order.total_amount),
             "created_at": localtime(order.created_at).strftime("%Y-%m-%d %H:%M"),
             "items": items,
             "current_year": timezone.now().year,
         }
 
-        # Render HTML template
         html = render_to_string(config["template"], context)
 
-        # Create and send email
         email = Email.objects.create(
             sender=settings.DEFAULT_FROM_EMAIL,
             recipient=order.customer.user.email,
@@ -118,91 +108,62 @@ def send_order_notification_email(instance, **_):
             status=Email.Status.SENDING,
         )
         email_send(email)
-        logger.info(
-            "Email sent for order %s with status %s",
-            order.id,
-            order.status,
-            extra={"order_id": order.id, "status": order.status},
-        )
+
+        logger.info("Order email sent for order %s [%s]", order.id, order.status)
+
     except Exception as e:
         logger.exception(
-            "[ERROR] Order email notification failed",
+            "[ERROR] Order email failed",
             extra={"error": str(e), "order_id": order.id, "status": order.status},
         )
 
 
 @receiver(post_save, sender=PaymentTransaction)
 def send_payment_notification_email(sender, instance, created, **kwargs):
-    transaction: PaymentTransaction = instance
+    txn: PaymentTransaction = instance
 
     try:
-        template_map = {
-            PaymentTransaction.StatusChoices.FAILED: {
-                "subject": f"[Rolt] Payment Failed - Order {transaction.order.id}",
-                "template": "email/failed_payment_notify.html",
-                "plain_text": (
-                    f"Hello {transaction.order.customer.full_name},\n\n"
-                    f"Your payment attempt for Order {transaction.order.id} has failed.\n"  # noqa: E501
-                    f"Amount: ${transaction.amount}\n"
-                    f"Reason: {transaction.message or 'Unknown error'}\n\n"
-                ),
-            },
+        if not txn.order:
+            logger.debug("No order linked with txn_ref %s", txn.txn_ref)
+            return
+
+        if txn.status != PaymentTransaction.StatusChoices.FAILED:
+            return
+
+        config = {
+            "subject": f"[Rolt] Payment Failed - Order #{txn.order.id}",
+            "template": "email/failed_payment_notify.html",
+            "plain_text": (
+                f"Hi {txn.order.customer.full_name},\n\n"
+                f"Your payment attempt for Order #{txn.order.id} has failed.\n"
+                f"Amount: {format_vnd(txn.amount)}\n"
+                f"Reason: {txn.message or 'Unknown error'}\n"
+            ),
         }
 
-        # Skip if status is not in template_map (e.g., PENDING, CANCELLED)
-        if transaction.status not in template_map:
-            logger.debug(
-                "Skipping email for payment transaction with unsupported status",
-                extra={
-                    "txn_ref": transaction.txn_ref,
-                    "status": transaction.status,
-                },
-            )
-            return
-
-        # Skip if no associated order exists
-        if not transaction.order:
-            logger.debug(
-                "Skipping email for payment transaction with no associated order",
-                extra={"txn_ref": transaction.txn_ref},
-            )
-            return
-
-        # Prepare email configuration and context
-        config = template_map[transaction.status]
         context = {
-            "customer_name": transaction.order.customer.full_name,
-            "order_id": transaction.order.id,
-            "amount": transaction.amount,
-            "message": transaction.message or "Unknown error"
-            if transaction.status == PaymentTransaction.StatusChoices.FAILED
-            else None,
+            "customer_name": txn.order.customer.full_name,
+            "order_id": txn.order.id,
+            "amount": format_vnd(txn.amount),
+            "message": txn.message or "Unknown error",
             "current_year": timezone.now().year,
         }
-        html_content = render_to_string(config["template"], context)
+
+        html = render_to_string(config["template"], context)
+
         email = Email.objects.create(
             sender=settings.DEFAULT_FROM_EMAIL,
-            recipient=transaction.order.customer.user.email,
+            recipient=txn.order.customer.user.email,
             subject=config["subject"],
             plain_text=config["plain_text"],
-            html=html_content,
+            html=html,
             status=Email.Status.SENDING,
         )
         email_send(email)
-        logger.info(
-            "Email sent for payment transaction with status",
-            extra={
-                "txn_ref": transaction.txn_ref,
-                "status": transaction.status,
-            },
-        )
+        logger.info("Payment failure email sent for txn_ref %s", txn.txn_ref)
 
     except Exception as e:
         logger.exception(
-            "[ERROR] Payment email notification failed",
-            extra={
-                "error": str(e),
-                "txn_ref": transaction.txn_ref,
-                "status": transaction.status,
-            },
+            "[ERROR] Payment email failed",
+            extra={"error": str(e), "txn_ref": txn.txn_ref, "status": txn.status},
         )

@@ -21,7 +21,8 @@ DEBUG = env.bool("DJANGO_DEBUG", False)
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # though not all of them may be available with every OS.
 # In Windows, this must be set to your system time zone.
-TIME_ZONE = "UTC"
+USE_TZ = True
+TIME_ZONE = "Asia/Ho_Chi_Minh"
 # https://docs.djangoproject.com/en/dev/ref/settings/#language-code
 LANGUAGE_CODE = "en-us"
 # https://docs.djangoproject.com/en/dev/ref/settings/#languages
@@ -301,6 +302,10 @@ CELERY_BEAT_SCHEDULE = {
         "task": "rolt.warranty.tasks.update_expired_warranties",
         "schedule": crontab(hour=0, minute=0),
     },
+    "update-order-status": {
+        "task": "rolt.shop.tasks.update_order_status",
+        "schedule": crontab(minute="*/15"),  # Every 15 minutes
+    },
 }
 
 # https://docs.celeryq.dev/en/stable/userguide/configuration.html#worker-send-task-events
@@ -388,8 +393,8 @@ SPECTACULAR_SETTINGS = {
 # ------------------------------------------------------------------------------
 # SimpleJWT
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "ROTATE_REFRESH_TOKENS": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
     "TOKEN_OBTAIN_SERIALIZER": "rolt.users.serializers.CustomTokenObtainPairSerializer",
