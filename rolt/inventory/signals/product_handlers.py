@@ -10,10 +10,12 @@ from django.dispatch import receiver
 
 from rolt.accessories.models import Accessory
 from rolt.builds.models import Build
+from rolt.components.models.artisan_keycap_model import ArtisanKeycap
 from rolt.components.models.keycap_model import Keycap
 from rolt.components.models.kit_model import Kit
 from rolt.components.models.switch_model import Switch
 from rolt.inventory.models import AccessoryInventory
+from rolt.inventory.models import ArtisanKeycapInventory
 from rolt.inventory.models import KeycapInventory
 from rolt.inventory.models import KitInventory
 from rolt.inventory.models import SwitchInventory
@@ -69,6 +71,7 @@ def get_inventory(product):
     # Map product model names to their inventory models
     inventory_map = {
         "keycap": KeycapInventory,
+        "artisankeycap": ArtisanKeycapInventory,
         "kit": KitInventory,
         "switch": SwitchInventory,
         "accessory": AccessoryInventory,
@@ -105,6 +108,7 @@ def get_inventory(product):
 
 @receiver(post_save, sender=Accessory)
 @receiver(post_save, sender=Keycap)
+@receiver(post_save, sender=ArtisanKeycap)
 @receiver(post_save, sender=Kit)
 @receiver(post_save, sender=Switch)
 def create_inventory(sender, instance, created, **kwargs):
@@ -121,6 +125,7 @@ def create_inventory(sender, instance, created, **kwargs):
         # Map product model names to their inventory models
         inventory_map = {
             "keycap": KeycapInventory,
+            "artisankeycap": ArtisanKeycapInventory,
             "kit": KitInventory,
             "switch": SwitchInventory,
             "accessory": AccessoryInventory,
@@ -147,6 +152,7 @@ def create_inventory(sender, instance, created, **kwargs):
 
 @receiver(post_delete, sender=Accessory)
 @receiver(post_delete, sender=Keycap)
+@receiver(post_save, sender=ArtisanKeycap)
 @receiver(post_delete, sender=Kit)
 @receiver(post_delete, sender=Switch)
 def delete_inventory(sender, instance, **kwargs):
@@ -161,6 +167,7 @@ def delete_inventory(sender, instance, **kwargs):
     # Map product model names to their inventory models
     inventory_map = {
         "keycap": KeycapInventory,
+        "artisankeycap": ArtisanKeycapInventory,
         "kit": KitInventory,
         "switch": SwitchInventory,
         "accessory": AccessoryInventory,
