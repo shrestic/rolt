@@ -6,16 +6,18 @@ from rolt.accessories.models import Accessory
 
 @admin.register(Accessory)
 class AccessoryAdmin(admin.ModelAdmin):
-    list_display = ("name", "type", "price", "preview_image")
+    list_display = (
+        "name",
+        "type",
+        "formatted_price",
+        "preview_image",
+    )  # dùng field mới
     search_fields = ("name", "type")
     list_filter = ("type",)
     ordering = ("name",)
-
     readonly_fields = ("preview_image",)
 
-    @admin.display(
-        description="Image",
-    )
+    @admin.display(description="Image")
     def preview_image(self, obj):
         if obj.image:
             return format_html(
@@ -23,3 +25,7 @@ class AccessoryAdmin(admin.ModelAdmin):
                 obj.image.url,
             )
         return "-"
+
+    @admin.display(description="Price (VND)")
+    def formatted_price(self, obj):
+        return f"{int(obj.price):,} VND".replace(",", ".")

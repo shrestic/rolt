@@ -19,7 +19,7 @@ def test_if_inline_serializer_is_created_correctly():
         microsecond=1,
         tzinfo=UTC,
     )
-    expected_dt = "2021-01-01T01:01:01.000001Z"
+    expected_dt = "2021-01-01T08:01:01.000001+07:00"
     obj = make_mock_object(foo=1, bar="bar", dt=dt)
 
     serializer = inline_serializer(

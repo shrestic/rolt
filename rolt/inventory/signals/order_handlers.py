@@ -12,6 +12,7 @@ from rolt.inventory.models import KeycapInventory
 from rolt.inventory.models import KitInventory
 from rolt.inventory.models import SwitchInventory
 from rolt.shop.models.order_model import Order
+from rolt.shop.models.order_model import OrderItem
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +89,7 @@ def process_build_inventory(build, quantity, operation="check"):
     Args:
         build: The build product instance.
         quantity: Number of builds to process.
-        operation: Operation type - "check", "deduct", or "restore".
+        operation: Operation type - "check" or "deduct".
 
     Returns:
         None for check operations, True for successful updates.
@@ -123,16 +124,6 @@ def process_build_inventory(build, quantity, operation="check"):
                 required_quantity,
             )
 
-        elif operation == "restore":
-            inventory.quantity += required_quantity
-            inventory.save()
-            logger.info(
-                "Inventory restored for %s %s: %s units added",
-                component_type,
-                component.name,
-                required_quantity,
-            )
-
 
 def process_regular_inventory(product, quantity, operation="check"):
     """
@@ -141,7 +132,7 @@ def process_regular_inventory(product, quantity, operation="check"):
     Args:
         product: The product instance.
         quantity: Quantity to process.
-        operation: Operation type - "check", "deduct", or "restore".
+        operation: Operation type - "check" or "deduct".
 
     Returns:
         None for check operations, True for successful updates.
@@ -165,15 +156,6 @@ def process_regular_inventory(product, quantity, operation="check"):
             quantity,
         )
 
-    elif operation == "restore":
-        inventory.quantity += quantity
-        inventory.save()
-        logger.info(
-            "Inventory restored for product %s: %s units added",
-            product,
-            quantity,
-        )
-
 
 def process_order_inventory(order, operation="check"):
     """
@@ -181,7 +163,7 @@ def process_order_inventory(order, operation="check"):
 
     Args:
         order: The Order instance.
-        operation: Operation type - "check", "deduct", or "restore".
+        operation: Operation type - "check" or "deduct".
 
     Raises:
         ValidationError: If insufficient inventory during check operations.
@@ -189,7 +171,6 @@ def process_order_inventory(order, operation="check"):
     action_msg = {
         "check": "Checking",
         "deduct": "Updating",
-        "restore": "Restoring",
     }
 
     logger.info("%s inventory for Order %s", action_msg[operation], order.id)
@@ -218,26 +199,27 @@ def process_order_inventory(order, operation="check"):
         logger.info("Inventory %s completed for Order %s", operation, order.id)
 
 
-@receiver(post_save, sender=Order)
-def restore_inventory_on_cancelled_order(sender, instance, created, **kwargs):
+@receiver(pre_save, sender=OrderItem)
+def check_inventory_before_orderitem_creation(sender, instance, **kwargs):
     """
-    Restore inventory when an Order is cancelled.
+    Check inventory before creating an OrderItem.
     """
-    if not created and instance.status == Order.StatusChoices.CANCELLED:
-        logger.info("Order %s cancelled, restoring inventory", instance.id)
+    if instance._state.adding:  # New OrderItem  # noqa: SLF001
+        product = instance.product
+        quantity = instance.quantity
 
-        with transaction.atomic():
-            process_order_inventory(instance, operation="restore")
+        logger.debug(
+            "Checking inventory for OrderItem: product %s, quantity %s",
+            product,
+            quantity,
+        )
 
+        is_build = product.__class__.__name__.lower() == "build"
 
-@receiver(pre_save, sender=Order)
-def check_inventory_before_order_creation(sender, instance, **kwargs):
-    """
-    Check inventory before saving a new Order.
-    """
-    # Only check for new orders (created=True is not available in pre_save)
-    if instance.pk is None:  # New instance
-        process_order_inventory(instance, operation="check")
+        if is_build:
+            process_build_inventory(product, quantity, operation="check")
+        else:
+            process_regular_inventory(product, quantity, operation="check")
 
 
 @receiver(post_save, sender=Order)

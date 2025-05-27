@@ -7,6 +7,7 @@ from model_bakery import baker
 from rest_framework import status
 
 from rolt.components.models.kit_model import Kit
+from rolt.inventory.models import KitInventory
 from rolt.shop.apis.order_apis import OrderStatus
 from rolt.shop.models import Order
 from rolt.shop.models import OrderItem
@@ -29,19 +30,20 @@ class TestWarrantyApis:
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         orderitem = baker.make(
             OrderItem,
             order=order,
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         baker.make(Warranty, customer=customer, orderitem=orderitem, _quantity=1)
         response = api_client.get("/warranty/")
         assert response.status_code == status.HTTP_200_OK
         assert len(response.data["results"]) == 1
-        logger.info("Test completed successfully")
 
     def test_if_customer_cannot_get_other_customer_warranty_list_return_empty(
         self,
@@ -53,6 +55,8 @@ class TestWarrantyApis:
         api_client.force_authenticate(user=customer1.user)
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer2, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -60,7 +64,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         baker.make(Warranty, customer=customer2, orderitem=orderitem, _quantity=1)
         response = api_client.get("/warranty/")
@@ -76,6 +80,8 @@ class TestWarrantyApis:
         api_client.force_authenticate(user=customer.user)
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -83,7 +89,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         warranty = baker.make(Warranty, customer=customer, orderitem=orderitem)
         response = api_client.get(f"/warranty/{warranty.id}/")
@@ -100,6 +106,8 @@ class TestWarrantyApis:
         api_client.force_authenticate(user=customer1.user)
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer2, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -107,7 +115,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         warranty = baker.make(Warranty, customer=customer2, orderitem=orderitem)
         response = api_client.get(f"/warranty/{warranty.id}/")
@@ -125,7 +133,8 @@ class TestWarrantyApis:
 
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
-
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -133,7 +142,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         warranty = baker.make(Warranty, customer=customer, orderitem=orderitem)
 
@@ -165,9 +174,10 @@ class TestWarrantyApis:
         product_manager = make_employee_is_product_manager()
         customer = make_customer(auth=False)
         api_client.force_authenticate(user=product_manager)
-
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
 
         orderitem = baker.make(
@@ -176,7 +186,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
 
         warranty = baker.make(Warranty, orderitem=orderitem, customer=customer)
@@ -193,9 +203,10 @@ class TestWarrantyApis:
         product_manager = make_employee_is_product_manager()
         customer = make_customer(auth=False)
         api_client.force_authenticate(user=product_manager)
-
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
 
         orderitem = baker.make(
@@ -204,14 +215,14 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
 
         warranty = baker.make(
             Warranty,
             orderitem=orderitem,
             customer=customer,
-        )  # ✅ FIXED
+        )
 
         response = api_client.delete(f"/warranty/{warranty.id}/delete/")
         assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -226,6 +237,8 @@ class TestWarrantyApis:
         api_client.force_authenticate(user=customer.user)
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -233,7 +246,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         warranty = baker.make(Warranty, customer=customer, orderitem=orderitem)
         baker.make(WarrantyRequest, customer=customer, warranty=warranty, _quantity=3)
@@ -250,9 +263,10 @@ class TestWarrantyApis:
         product_manager = make_employee_is_product_manager()
         customer = make_customer(auth=False)
         api_client.force_authenticate(user=product_manager)
-
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
 
         orderitem = baker.make(
@@ -261,7 +275,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
 
         warranty = baker.make(
@@ -290,6 +304,8 @@ class TestWarrantyApis:
         api_client.force_authenticate(user=customer.user)
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -297,7 +313,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         warranty = baker.make(Warranty, customer=customer, orderitem=orderitem)
         warranty_request = baker.make(
@@ -319,6 +335,8 @@ class TestWarrantyApis:
         api_client.force_authenticate(user=customer1.user)
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer2, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -326,7 +344,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         warranty = baker.make(Warranty, customer=customer2, orderitem=orderitem)
         warranty_request = baker.make(
@@ -353,6 +371,8 @@ class TestWarrantyApis:
         api_client.force_authenticate(user=customer.user)
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -360,7 +380,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         warranty = baker.make(Warranty, customer=customer, orderitem=orderitem)
         data = {"warranty_id": str(warranty.id), "description": "Keyboard not working"}
@@ -378,6 +398,8 @@ class TestWarrantyApis:
         api_client.force_authenticate(user=customer1.user)
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer2, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -385,7 +407,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         warranty = baker.make(Warranty, customer=customer2, orderitem=orderitem)
         data = {"warranty_id": str(warranty.id), "description": "Test"}
@@ -401,9 +423,10 @@ class TestWarrantyApis:
         product_manager = make_employee_is_product_manager()
         customer = make_customer(auth=False)
         api_client.force_authenticate(user=product_manager)
-
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -411,7 +434,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         warranty = baker.make(Warranty, orderitem=orderitem, customer=customer)
         warranty_request = baker.make(
@@ -435,9 +458,10 @@ class TestWarrantyApis:
         product_manager = make_employee_is_product_manager()
         customer = make_customer(auth=False)
         api_client.force_authenticate(user=product_manager)
-
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
 
         orderitem = baker.make(
@@ -446,7 +470,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
 
         warranty = baker.make(Warranty, orderitem=orderitem, customer=customer)
@@ -485,6 +509,8 @@ class TestWarrantyApis:
         api_client.force_authenticate(user=customer.user)
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
         orderitem = baker.make(
             OrderItem,
@@ -492,7 +518,7 @@ class TestWarrantyApis:
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
         warranty = baker.make(Warranty, customer=customer, orderitem=orderitem)
         data = {"warranty_id": str(warranty.id)}
@@ -509,16 +535,18 @@ class TestWarrantyApis:
 
         product = baker.make(Kit, name="Test Product")
         content_type = ContentType.objects.get_for_model(Kit)
+        KitInventory.objects.filter(kit=product).delete()
+        baker.make(KitInventory, kit=product, quantity=10)
         order = baker.make(Order, customer=customer, status=OrderStatus.DELIVERED)
 
-        # OrderItem 1 → cho expired warranty
+        # OrderItem 1 →  expired warranty
         orderitem_1 = baker.make(
             OrderItem,
             order=order,
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
 
         expired_warranty = baker.make(
@@ -531,14 +559,14 @@ class TestWarrantyApis:
         response = api_client.post("/warranty/request/create/", data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
-        # OrderItem 2 → cho void warranty
+        # OrderItem 2 → void warranty
         orderitem_2 = baker.make(
             OrderItem,
             order=order,
             content_type=content_type,
             object_id=product.id,
             name_snapshot=product.name,
-            price_snapshot=100.00,
+            price_snapshot=100,
         )
 
         void_warranty = baker.make(

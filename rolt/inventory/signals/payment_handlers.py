@@ -14,12 +14,10 @@ def process_payment_inventory_change(
 ):
     """
     Handle order status changes based on payment transaction status changes.
-
     Since inventory is already managed by Order signals, this function only
     updates the order status which will trigger the appropriate inventory changes.
-
     - Updates order to PAID for successful payments
-    - Updates order to CANCELLED for failed/cancelled payments after success
+    - Keeps order unchanged for failed/cancelled payments (no inventory restoration)
     """
     logger.info(
         "[PAYMENT PROCESSING] Payment %s - status=%s - old_status=%s",
@@ -43,34 +41,25 @@ def process_payment_inventory_change(
             "[PAYMENT SUCCESS] Updating order %s status to PAID",
             order.id,
         )
-
         with transaction.atomic():
             # Update order status - this will trigger inventory deduction via Order signals  # noqa: E501
             order.status = Order.StatusChoices.PAID
             order.save(update_fields=["status"])
-
         logger.info("Order %s marked as PAID", order.id)
 
-    # Handle cancel/fail after success → update order to CANCELLED
-    elif (
-        payment_transaction.status
-        in [
-            PaymentTransaction.StatusChoices.FAILED,
-            PaymentTransaction.StatusChoices.CANCELLED,
-        ]
-        and old_status == PaymentTransaction.StatusChoices.SUCCESS
-    ):
+    # Handle payment failures/cancellations → keep order unchanged
+    elif payment_transaction.status in [
+        PaymentTransaction.StatusChoices.FAILED,
+        PaymentTransaction.StatusChoices.CANCELLED,
+    ]:
         logger.info(
-            "[PAYMENT RESTORE] Updating order %s status to CANCELLED",
+            "[PAYMENT FAILED/CANCELLED] Payment %s failed/cancelled - keeping order %s unchanged",  # noqa: E501
+            payment_transaction.txn_ref,
             order.id,
         )
-
-        with transaction.atomic():
-            # Update order status - this will trigger inventory restoration via Order signals  # noqa: E501
-            order.status = Order.StatusChoices.CANCELLED
-            order.save(update_fields=["status"])
-
-        logger.info("Order %s marked as CANCELLED", order.id)
+        # Order remains in its current state (likely PENDING)
+        # Inventory remains checked but not deducted
+        # No restoration needed since inventory was never deducted
 
     else:
         logger.debug(
