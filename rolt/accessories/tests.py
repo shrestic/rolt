@@ -41,7 +41,7 @@ class TestAccessoryApi:
             "name": "Test Cable",
             "type": "cable",
             "description": "A coiled cable.",
-            "price": "19.99",
+            "price": 19,
             "image": None,
         }
 

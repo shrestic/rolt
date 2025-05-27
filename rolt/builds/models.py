@@ -38,8 +38,8 @@ class Build(BaseModel):
         related_name="builds",
     )
     total_price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
+        max_digits=14,
+        decimal_places=0,
         default=0,
     )
 
@@ -59,7 +59,7 @@ class Service(models.Model):
     code = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, default="")
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=14, decimal_places=0)
     image = models.ImageField(
         upload_to="accessories/",
         blank=True,
@@ -83,7 +83,7 @@ class SelectedService(models.Model):
         related_name="selected_services",
     )
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=14, decimal_places=0)
 
     class Meta:
         db_table = "selected_service"

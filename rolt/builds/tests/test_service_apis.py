@@ -17,7 +17,7 @@ class TestServiceApi:
         payload = {
             "code": "LUBE_SERVICE",
             "name": "Lube Switches",
-            "price": "15.00",
+            "price": 15,
             "description": "Lube all your switches for smoother feel",
         }
 
@@ -74,11 +74,11 @@ class TestServiceApi:
         user = make_employee_is_product_manager()
         api_client.force_authenticate(user=user)
 
-        service = Service.objects.create(code="UPDATE_ME", name="Temp", price=1)
+        service = Service.objects.create(code="UPDATE_ME", name="Temp", price=10)
 
         payload = {
             "name": "Updated Name",
-            "price": "20.00",
+            "price": 20,
         }
 
         response = api_client.patch(
@@ -89,7 +89,7 @@ class TestServiceApi:
         assert response.status_code == status.HTTP_200_OK
         service.refresh_from_db()
         assert service.name == "Updated Name"
-        assert service.price == 20.00  # noqa: PLR2004
+        assert service.price == 20  # noqa: PLR2004
 
     def test_if_delete_nonexistent_service_return_400(
         self,

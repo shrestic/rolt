@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import pytest
 from model_bakery import baker
 from rest_framework import status
@@ -231,7 +233,7 @@ class TestBuildApi:
         kit = baker.make(Kit, manufacturer=manufacturer, number_of_keys=87)
         switch = baker.make(Switch, manufacturer=manufacturer)
         keycap = baker.make(Keycap, manufacturer=manufacturer)
-        service = baker.make(Service)
+        service = baker.make(Service, price=Decimal("50000.00"))
 
         kit_inv = KitInventory.objects.get(kit=kit)
         kit_inv.quantity = 2

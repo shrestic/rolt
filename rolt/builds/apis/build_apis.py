@@ -50,7 +50,7 @@ class BuildOutputSerializer(serializers.ModelSerializer):
                     "name": serializers.CharField(),
                 },
             ),
-            "price": serializers.DecimalField(max_digits=10, decimal_places=2),
+            "price": serializers.DecimalField(max_digits=14, decimal_places=0),
         },
         source="selected_services.all",
     )

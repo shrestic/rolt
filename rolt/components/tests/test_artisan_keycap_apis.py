@@ -37,7 +37,7 @@ class TestArtisanKeycapApis:
             "colorway": "Sunset",
             "image": None,
             "description": "Handcrafted artisan keycap with sunset theme.",
-            "price": 50.00,
+            "price": 50,
             "limited_quantity": 100,
         }
         response = api_client.post(
@@ -63,7 +63,7 @@ class TestArtisanKeycapApis:
                 "colorway": "Red",
                 "image": None,
                 "description": "Fantasy keycap.",
-                "price": 40.00,
+                "price": 40,
                 "limited_quantity": 50,
             },
             {
@@ -74,7 +74,7 @@ class TestArtisanKeycapApis:
                 "colorway": "Blue",
                 "image": None,
                 "description": "Ocean themed keycap.",
-                "price": 55.00,
+                "price": 55,
                 "limited_quantity": 70,
             },
         ]

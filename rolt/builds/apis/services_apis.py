@@ -51,7 +51,7 @@ class ServiceCreateApi(APIView):
         code = serializers.CharField()
         name = serializers.CharField()
         description = serializers.CharField(required=False)
-        price = serializers.DecimalField(max_digits=10, decimal_places=2)
+        price = serializers.DecimalField(max_digits=14, decimal_places=0)
         image = serializers.ImageField(required=False, allow_null=True)
 
     def post(self, request):
@@ -81,8 +81,8 @@ class ServiceUpdateApi(APIView):
         name = serializers.CharField(required=False)
         description = serializers.CharField(required=False)
         price = serializers.DecimalField(
-            max_digits=10,
-            decimal_places=2,
+            max_digits=14,
+            decimal_places=0,
             required=False,
         )
         image = serializers.ImageField(required=False, allow_null=True)

@@ -84,7 +84,7 @@
             <strong>Status:</strong> {{ status }}
           </p>
           <p>
-            <strong>Refund Amount:</strong> ${{ total_amount }}
+            <strong>Refund Amount:</strong> {{ total_amount }}
           </p>
           <p>
             <strong>Processed At:</strong> {{ created_at }}
@@ -106,7 +106,7 @@
                   <td>{{ item.name_snapshot }}</td>
                   <td>{{ item.content_type.model }}</td>
                   <td>{{ item.quantity }}</td>
-                  <td>${{ item.price_snapshot }}</td>
+                  <td>{{ item.display_price }}</td>
                 </tr>
               {% endfor %}
             </tbody>
